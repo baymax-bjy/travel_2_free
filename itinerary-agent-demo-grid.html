@@ -1223,36 +1223,48 @@ function showFinal() {
   setTimeout(() => {
     removeTyping(tid);
     const bid = 'ai-final';
-    append(`<div class="ai-block" id="${bid}">
-      <div class="article">
-        <p>好的！3轮沟通完毕，这是根据你所有偏好定制的<b>最终版行程规划</b>——包含完整路线、每日安排、住宿推荐、美食地图、交通攻略、预算明细和出行贴士。</p>
-      </div>
-      ${renderV3(state.choices)}
-      <div class="like-share">
-        <p class="disclaimer">回答由AI生成，内容仅供参考</p>
-        <div class="action-row">
-          <div class="btn-group">
-            <button class="action-btn"><img src="https://gw.alicdn.com/imgextra/i2/O1CN01SFT3RD2A6aeMxtJOt_!!6000000008154-2-tps-64-64.png" width="32" height="32"></button>
-            <button class="action-btn"><img src="https://gw.alicdn.com/imgextra/i1/O1CN01EUrI4o1bOtvujdMCF_!!6000000003456-2-tps-64-64.png" width="32" height="32"></button>
-            <button class="action-btn"><img src="https://gw.alicdn.com/imgextra/i1/O1CN01f5oE2k1DYTQtfTRCH_!!6000000000228-2-tps-64-64.png" width="32" height="32"></button>
+    try {
+      const v3Content = renderV3(state.choices);
+      append(`<div class="ai-block" id="${bid}">
+        <div class="article">
+          <p>好的！3轮沟通完毕，这是根据你所有偏好定制的<b>最终版行程规划</b>——包含完整路线、每日安排、住宿推荐、美食地图、交通攻略、预算明细和出行贴士。</p>
+        </div>
+        ${v3Content}
+        <div class="like-share">
+          <p class="disclaimer">回答由AI生成，内容仅供参考</p>
+          <div class="action-row">
+            <div class="btn-group">
+              <button class="action-btn"><img src="https://gw.alicdn.com/imgextra/i2/O1CN01SFT3RD2A6aeMxtJOt_!!6000000008154-2-tps-64-64.png" width="32" height="32"></button>
+              <button class="action-btn"><img src="https://gw.alicdn.com/imgextra/i1/O1CN01EUrI4o1bOtvujdMCF_!!6000000003456-2-tps-64-64.png" width="32" height="32"></button>
+              <button class="action-btn"><img src="https://gw.alicdn.com/imgextra/i1/O1CN01f5oE2k1DYTQtfTRCH_!!6000000000228-2-tps-64-64.png" width="32" height="32"></button>
+            </div>
+            <button class="think-btn"><img src="https://gw.alicdn.com/imgextra/i2/O1CN01Xqbrpd1jOus8H3PtA_!!6000000004539-2-tps-84-84.png" width="42" height="42"><span>已深度思考</span></button>
           </div>
-          <button class="think-btn"><img src="https://gw.alicdn.com/imgextra/i2/O1CN01Xqbrpd1jOus8H3PtA_!!6000000004539-2-tps-84-84.png" width="42" height="42"><span>已深度思考</span></button>
         </div>
-      </div>
-      <div class="followup-wrap">
-        <p class="guide">你还可以问：</p>
-        <div class="followup-list">
-          <a class="followup-item" href="javascript:void(0)"><span>帮我预订 Day2 的米其林餐厅</span><img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" width="20" height="20"></a>
-          <a class="followup-item" href="javascript:void(0)"><span>下雨天行程怎么调整？</span><img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" width="20" height="20"></a>
-          <a class="followup-item" href="javascript:void(0)"><span>帮我生成可分享的行程图片</span><img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" width="20" height="20"></a>
+        <div class="followup-wrap">
+          <p class="guide">你还可以问：</p>
+          <div class="followup-list">
+            <a class="followup-item" href="javascript:void(0)"><span>帮我预订 Day2 的米其林餐厅</span><img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" width="20" height="20"></a>
+            <a class="followup-item" href="javascript:void(0)"><span>下雨天行程怎么调整？</span><img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" width="20" height="20"></a>
+            <a class="followup-item" href="javascript:void(0)"><span>帮我生成可分享的行程图片</span><img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" width="20" height="20"></a>
+          </div>
         </div>
-      </div>
-      <button class="restart-btn" onclick="restart()">↻ 重新体验 Demo</button>
-    </div>`);
-    setTimeout(() => show(document.getElementById(bid)), 50);
-    scrollBottom();
-    drawMap('map-v3', mapPointsV3, '#6666ff');
-  }, 2500);
+        <button class="restart-btn" onclick="restart()">↻ 重新体验 Demo</button>
+      </div>`);
+      setTimeout(() => show(document.getElementById(bid)), 50);
+      scrollBottom();
+      drawMap('map-v3', mapPointsV3, '#6666ff');
+    } catch (e) {
+      console.error('Error in showFinal:', e);
+      append(`<div class="ai-block" id="error-block">
+        <div class="article">
+          <p style="color:red">生成最终版行程时出错: ${e.message}</p>
+          <button class="restart-btn" onclick="restart()">↻ 重新体验 Demo</button>
+        </div>
+      </div>`);
+      setTimeout(() => show(document.getElementById('error-block')), 50);
+    }
+  }, 1500);
 }
 
 // ===================================================================
