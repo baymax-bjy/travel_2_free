@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=750, user-scalable=no">
+  <title>飞猪千问 - 长沙三天两夜行程规划</title>
+  <style>
+    @font-face {
+      font-family: 'Fliggy Sans 102';
+      src: url('https://g.alicdn.com/trip/common-assets/1.1.9/fonts/FliggySans102-Md.ttf') format('truetype');
+      font-weight: 500;
+      font-display: swap;
+    }
+    
+    :root {
+      --color-darkgray: #0f131a;
+      --color-midgray: #5c5f66;
+      --color-lightgray: #919499;
+      --color-indigo-1: #6666ff;
+      --color-indigo-4: #EBEBFF;
+      --color-warning-1: #ff3333;
+      --color-pay-1: #ff5533;
+      --color-white: #ffffff;
+      --color-label: #F7F8FA;
+      --color-bg: #f2f3f5;
+      --radius-xl: 36px;
+      --radius-l: 24px;
+      --radius-m: 12px;
+      --radius-s: 6px;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'PingFang SC', 'SimHei', sans-serif;
+      background: var(--color-label);
+    }
+    
+    /* 导航栏样式 */
+    .skill-header-component {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 750px;
+      height: 176px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* 内容区域 */
+    .content-area {
+      padding: 176px 30px 258px;
+      width: 750px;
+      box-sizing: border-box;
+    }
+    
+    /* 输入气泡 */
+    .input-bubble-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      padding: 24px 0;
+      width: 690px;
+    }
+    
+    .input-bubble {
+      max-width: 600px;
+      padding: 30px;
+      background: linear-gradient(180deg, #E4E4FF 0%, #EDEDFF 100%);
+      border-radius: 36px;
+    }
+    
+    .input-bubble p {
+      margin: 0;
+      font-weight: 500;
+      font-size: 30px;
+      line-height: 140%;
+      color: #0F131A;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    
+    /* 文本组件 */
+    .article-content {
+      width: 690px;
+      background: transparent;
+    }
+    
+    .article-content h1 {
+      font-size: 42px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: var(--color-darkgray);
+      margin: 0;
+    }
+    
+    .article-content h2 {
+      font-size: 36px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: var(--color-darkgray);
+      margin-top: 42px;
+      margin-bottom: 0;
+    }
+    
+    .article-content h3 {
+      font-size: 30px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: var(--color-darkgray);
+      margin-top: 24px;
+      margin-bottom: 0;
+    }
+    
+    .article-content p {
+      font-size: 30px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--color-darkgray);
+      margin-top: 24px;
+      margin-bottom: 0;
+    }
+    
+    /* 表格组件 */
+    .table-wrapper {
+      width: 690px;
+      margin-top: 24px;
+      border-radius: var(--radius-xl);
+      background-color: var(--color-white);
+      overflow: hidden;
+      overflow-x: auto;
+    }
+    
+    .table-wrapper table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .table-wrapper thead {
+      background-color: var(--color-bg);
+    }
+    
+    .table-wrapper th {
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--color-darkgray);
+      padding: 24px;
+      text-align: left;
+    }
+    
+    .table-wrapper td {
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--color-darkgray);
+      padding: 24px;
+      border-bottom: 1px solid var(--color-bg);
+    }
+    
+    .table-wrapper tr:last-child td {
+      border-bottom: none;
+    }
+    
+    /* 景点图片+介绍卡片 */
+    .poi-card {
+      width: 690px;
+      margin-top: 24px;
+      background: var(--color-white);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+    
+    .poi-image {
+      width: 100%;
+      height: 300px;
+      background-size: cover;
+      background-position: center;
+      background-color: #E0E0E0;
+    }
+    
+    .poi-content {
+      padding: 24px;
+    }
+    
+    .poi-title {
+      font-size: 32px;
+      font-weight: 500;
+      color: var(--color-darkgray);
+      margin-bottom: 12px;
+    }
+    
+    .poi-desc {
+      font-size: 26px;
+      color: var(--color-midgray);
+      line-height: 1.6;
+    }
+    
+    .poi-tags {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    
+    .poi-tag {
+      padding: 8px 16px;
+      background: var(--color-bg);
+      border-radius: var(--radius-s);
+      font-size: 22px;
+      color: var(--color-lightgray);
+    }
+    
+    /* 时间线样式 */
+    .timeline {
+      position: relative;
+      padding-left: 30px;
+      margin-top: 18px;
+    }
+    
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 12px;
+      bottom: 12px;
+      width: 2px;
+      background: var(--color-bg);
+    }
+    
+    .timeline-item {
+      position: relative;
+      padding-bottom: 30px;
+    }
+    
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -26px;
+      top: 8px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--color-indigo-1);
+    }
+    
+    .timeline-time {
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--color-indigo-1);
+      margin-bottom: 6px;
+    }
+    
+    .timeline-title {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--color-darkgray);
+      margin-bottom: 6px;
+    }
+    
+    .timeline-desc {
+      font-size: 26px;
+      color: var(--color-midgray);
+      line-height: 1.5;
+    }
+    
+    /* Day 标题区域 */
+    .day-header {
+      background: var(--color-white);
+      border-radius: var(--radius-xl);
+      padding: 30px;
+      margin-top: 36px;
+      margin-bottom: 12px;
+    }
+    
+    .day-badge {
+      display: inline-block;
+      padding: 8px 24px;
+      background: var(--color-indigo-4);
+      border-radius: var(--radius-l);
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--color-indigo-1);
+      margin-bottom: 12px;
+    }
+    
+    .day-title {
+      font-size: 32px;
+      font-weight: 500;
+      color: var(--color-darkgray);
+    }
+    
+    /* 提示框 */
+    .tip-box {
+      background: linear-gradient(135deg, #FFF8E7 0%, #FFF3D6 100%);
+      border-radius: var(--radius-l);
+      padding: 24px;
+      margin-top: 24px;
+      border-left: 4px solid #FFB800;
+    }
+    
+    .tip-box-title {
+      font-size: 26px;
+      font-weight: 500;
+      color: #B8860B;
+      margin-bottom: 12px;
+    }
+    
+    .tip-box-content {
+      font-size: 24px;
+      color: var(--color-midgray);
+      line-height: 1.6;
+    }
+    
+    /* 预算卡片 */
+    .budget-card {
+      background: var(--color-white);
+      border-radius: var(--radius-xl);
+      padding: 30px;
+      margin-top: 24px;
+    }
+    
+    .budget-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--color-bg);
+    }
+    
+    .budget-row:last-child {
+      border-bottom: none;
+    }
+    
+    .budget-label {
+      font-size: 28px;
+      color: var(--color-midgray);
+    }
+    
+    .budget-value {
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--color-darkgray);
+      font-family: 'Fliggy Sans 102', 'PingFang SC', sans-serif;
+    }
+    
+    .budget-total {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--color-pay-1);
+      font-family: 'Fliggy Sans 102', 'PingFang SC', sans-serif;
+    }
+    
+    /* 点赞与分享组件 */
+    .feedback-section {
+      width: 690px;
+      padding-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    
+    .disclaimer {
+      font-size: 24px;
+      font-weight: 400;
+      color: #919499;
+      margin: 0;
+      line-height: 1.4;
+    }
+    
+    .feedback-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    
+    .feedback-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .feedback-btn {
+      width: 72px;
+      height: 72px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #FFFFFF;
+      border: 1px solid rgba(15,19,26,0.12);
+      border-radius: 24px;
+      cursor: pointer;
+      padding: 0;
+    }
+    
+    .thinking-btn {
+      display: flex;
+      align-items: center;
+      padding: 18px;
+      gap: 12px;
+      height: 72px;
+      background: #FFFFFF;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 24px;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    
+    .thinking-btn span {
+      font-size: 26px;
+      font-weight: 400;
+      color: #0F131A;
+      line-height: 1.4;
+    }
+    
+    /* 追问组件 */
+    .follow-up-section {
+      width: 690px;
+      margin-top: 42px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    
+    .follow-up-title {
+      font-size: 30px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: #0F131A;
+      margin: 0;
+    }
+    
+    .follow-up-items {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .follow-up-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      height: 84px;
+      padding: 24px;
+      box-sizing: border-box;
+      background: #FFFFFF;
+      border: 1px solid rgba(15,19,26,0.12);
+      border-radius: 24px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    
+    .follow-up-item span {
+      font-size: 26px;
+      line-height: 1.4;
+      color: #0F131A;
+      white-space: nowrap;
+    }
+    
+    /* 底部输入区 */
+    .bottom-input-area {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 750px;
+      height: 258px;
+      z-index: 9998;
+    }
+    
+    .bottom-input-area img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- ====== 导航栏组件 开始 ====== -->
+  <div class="skill-header-component">
+    <!-- 状态栏 -->
+    <div style="width: 750px; height: 88px; flex-shrink: 0;">
+      <svg width="750" height="88" viewBox="0 0 750 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_nav)">
+          <rect width="750" height="88" fill="#F7F8FA"/>
+          <g clip-path="url(#clip1_nav)">
+            <path d="M59.8576 33.616C62.2936 33.616 64.1416 34.484 65.4296 36.276C66.6616 37.984 67.3056 40.364 67.3056 43.444C67.3056 46.692 66.6336 49.324 65.3176 51.34C63.9456 53.356 62.1256 54.392 59.8296 54.392C55.9376 54.392 53.7536 52.572 53.2496 48.96H56.2176C56.6096 50.892 57.8416 51.872 59.8576 51.872C61.2296 51.872 62.3216 51.172 63.1616 49.828C63.9456 48.54 64.3656 46.916 64.3656 44.984C64.3656 44.872 64.3376 44.76 64.3376 44.62H64.2256C63.6656 45.488 62.9376 46.132 62.0976 46.58C61.2856 46.972 60.3616 47.196 59.3256 47.196C57.3656 47.196 55.7696 46.552 54.5936 45.292C53.4456 44.06 52.8856 42.464 52.8856 40.504C52.8856 38.488 53.5296 36.864 54.8736 35.576C56.2176 34.26 57.8696 33.616 59.8576 33.616ZM59.9696 36.136C58.7376 36.136 57.7296 36.528 57.0016 37.368C56.2456 38.18 55.8816 39.216 55.8816 40.504C55.8816 41.792 56.2456 42.8 57.0016 43.556C57.7016 44.34 58.6816 44.732 59.9416 44.732C61.1736 44.732 62.1816 44.34 62.9096 43.556C63.6376 42.772 64.0016 41.708 64.0016 40.42C64.0016 39.104 63.6096 38.068 62.8816 37.312C62.1256 36.528 61.1456 36.136 59.9696 36.136ZM72.2787 39.636C72.8387 39.636 73.3427 39.832 73.7627 40.252C74.1547 40.644 74.3787 41.148 74.3787 41.736C74.3787 42.296 74.1547 42.8 73.7627 43.22C73.3427 43.612 72.8387 43.808 72.2787 43.808C71.6627 43.808 71.1867 43.612 70.8227 43.22C70.4027 42.8 70.2067 42.296 70.2067 41.736C70.2067 41.148 70.4027 40.644 70.8227 40.252C71.1867 39.832 71.6627 39.636 72.2787 39.636ZM72.2787 49.884C72.8387 49.884 73.3427 50.08 73.7627 50.5C74.1547 50.892 74.3787 51.396 74.3787 51.984C74.3787 52.544 74.1547 53.048 73.7627 53.468C73.3427 53.86 72.8387 54.056 72.2787 54.056C71.6627 54.056 71.1867 53.86 70.8227 53.468C70.4027 53.048 70.2067 52.544 70.2067 51.984C70.2067 51.396 70.4027 50.892 70.8227 50.5C71.1867 50.08 71.6627 49.884 72.2787 49.884ZM86.5156 34.008H89.3156V47.224H92.3396V49.66H89.3156V54H86.4036V49.66H76.6596V46.776L86.5156 34.008ZM86.3196 37.872L79.1516 47.224H86.4036V37.872H86.3196Z" fill="#0F131A"/>
+          </g>
+          <g clip-path="url(#clip2_nav)">
+            <rect opacity="0.35" x="678.344" y="33.6719" width="42" height="20.6667" rx="4.33333" fill="#0F131A" stroke="#0F131A" stroke-width="2"/>
+            <path opacity="0.4" d="M723.344 40.0078V48.0078C724.953 47.3303 726 45.7541 726 44.0078C726 42.2615 724.953 40.6854 723.344 40.0078Z" fill="#0F131A"/>
+            <rect x="681.344" y="36.6719" width="36" height="14.6667" rx="2.66667" fill="#0F131A"/>
+            <path d="M647.586 49.4623C650.138 47.3047 653.873 47.3046 656.424 49.4623C656.553 49.5783 656.628 49.7424 656.631 49.9154C656.635 50.0883 656.566 50.2552 656.443 50.3763L652.449 54.4076C652.332 54.526 652.172 54.5921 652.005 54.5921C651.839 54.5921 651.679 54.526 651.562 54.4076L647.567 50.3763C647.444 50.2551 647.376 50.0882 647.379 49.9154C647.383 49.7424 647.458 49.5782 647.586 49.4623ZM642.255 44.0843C647.752 38.9718 656.264 38.9716 661.76 44.0843C661.884 44.2041 661.955 44.369 661.957 44.5414C661.958 44.7138 661.891 44.8799 661.769 45.0023L659.459 47.3363C659.221 47.5742 658.837 47.5789 658.593 47.347C656.788 45.7127 654.44 44.8079 652.005 44.808C649.572 44.809 647.225 45.7137 645.421 47.347C645.177 47.5788 644.793 47.5743 644.555 47.3363L642.247 45.0023C642.125 44.8801 642.056 44.7139 642.058 44.5414C642.06 44.3689 642.131 44.2041 642.255 44.0843ZM636.923 38.723C645.353 30.6444 658.652 30.6444 667.083 38.723C667.205 38.843 667.274 39.007 667.275 39.1781C667.276 39.3491 667.209 39.5137 667.088 39.6351L664.776 41.9691C664.538 42.2082 664.151 42.2106 663.91 41.9749C660.698 38.9215 656.435 37.2193 652.003 37.2191C647.571 37.2191 643.308 38.9213 640.096 41.9749C639.855 42.2109 639.468 42.2085 639.23 41.9691L636.917 39.6351C636.796 39.5136 636.729 39.3491 636.73 39.1781C636.731 39.0069 636.801 38.8429 636.923 38.723Z" fill="#0F131A"/>
+            <path d="M596.676 46.6719C597.78 46.6719 598.676 47.5673 598.676 48.6719V52.6719C598.676 53.7764 597.78 54.6719 596.676 54.6719H594.676C593.571 54.6719 592.676 53.7764 592.676 52.6719V48.6719C592.676 47.5673 593.571 46.6719 594.676 46.6719H596.676ZM606.008 42.6719C607.112 42.6719 608.008 43.5673 608.008 44.6719V52.6719C608.008 53.7764 607.112 54.6719 606.008 54.6719H604.008C602.903 54.6719 602.008 53.7764 602.008 52.6719V44.6719C602.008 43.5673 602.903 42.6719 604.008 42.6719H606.008ZM624.676 33.3359C625.78 33.3359 626.676 34.2314 626.676 35.3359V52.6689C626.676 53.7735 625.78 54.6689 624.676 54.6689H622.676C621.571 54.6689 620.676 53.7735 620.676 52.6689V35.3359C620.676 34.2314 621.571 33.3359 622.676 33.3359H624.676ZM615.344 38C616.448 38 617.344 38.8954 617.344 40V52.667C617.344 53.7714 616.448 54.667 615.344 54.667H613.344C612.239 54.667 611.344 53.7714 611.344 52.667V40C611.344 38.8954 612.239 38 613.344 38H615.344Z" fill="#0F131A"/>
+          </g>
+        </g>
+        <defs>
+          <clipPath id="clip0_nav"><rect width="750" height="88" fill="white"/></clipPath>
+          <clipPath id="clip1_nav"><rect width="108" height="34" fill="white" transform="translate(24 27)"/></clipPath>
+          <clipPath id="clip2_nav"><rect width="133.323" height="22.672" fill="white" transform="translate(592.676 32.6641)"/></clipPath>
+        </defs>
+      </svg>
+    </div>
+    <!-- 导航栏 -->
+    <nav style="
+      box-sizing: border-box;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 24px; width: 750px; height: 88px; background: #F7F8FA;
+    ">
+      <div style="display: flex; align-items: center; width: 114px;">
+        <div style="width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M38.5 10.5C39.3284 10.5 40 11.1716 40 12C40 12.8284 39.3284 13.5 38.5 13.5H9.5C8.67157 13.5 8 12.8284 8 12C8 11.1716 8.67157 10.5 9.5 10.5H38.5Z" fill="#0F131A"/>
+            <path d="M28.5 22.5C29.3284 22.5 30 23.1716 30 24C30 24.8284 29.3284 25.5 28.5 25.5H9.5C8.67157 25.5 8 24.8284 8 24C8 23.1716 8.67157 22.5 9.5 22.5H28.5Z" fill="#0F131A"/>
+            <path d="M33.5 34.5C34.3284 34.5 35 35.1716 35 36C35 36.8284 34.3284 37.5 33.5 37.5H9.5C8.67157 37.5 8 36.8284 8 36C8 35.1716 8.67157 34.5 9.5 34.5H33.5Z" fill="#0F131A"/>
+          </svg>
+        </div>
+      </div>
+      <div style="flex-grow: 1; display: flex; justify-content: center;">
+        <h1 style="margin: 0; font-weight: 500; font-size: 36px; line-height: 140%; text-align: center; color: #0F131A;">飞猪千问</h1>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: flex-end; width: 114px; gap: 18px;">
+        <div style="width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 7.5C24.8284 7.5 25.5 8.17157 25.5 9C25.5 9.82843 24.8284 10.5 24 10.5H12C10.067 10.5 8.5 12.067 8.5 14V38.1797L11.8076 34.6182C12.4698 33.9052 13.399 33.5 14.3721 33.5H36C37.933 33.5 39.5 31.933 39.5 30V23.5C39.5 22.6716 40.1716 22 41 22C41.8284 22 42.5 22.6716 42.5 23.5V30C42.5 33.5899 39.5899 36.5 36 36.5H14.3721C14.2331 36.5 14.1004 36.5583 14.0059 36.6602L9.83203 41.1543C8.28593 42.8193 5.5 41.7253 5.5 39.4531V14C5.5 10.4101 8.41015 7.5 12 7.5H24Z" fill="black"/>
+            <path d="M36.4541 3.99023C37.2825 3.99023 37.9541 4.66181 37.9541 5.49023V10.998H43.5C44.3284 10.998 45 11.6696 45 12.498C45 13.3265 44.3284 13.998 43.5 13.998H37.9541V19.4902C37.9541 20.3187 37.2825 20.9902 36.4541 20.9902C35.6257 20.9902 34.9541 20.3187 34.9541 19.4902V13.998H29.5C28.6716 13.998 28 13.3265 28 12.498C28 11.6696 28.6716 10.998 29.5 10.998H34.9541V5.49023C34.9541 4.66181 35.6257 3.99023 36.4541 3.99023Z" fill="black"/>
+          </svg>
+        </div>
+        <div style="width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.4837 19.6036C9.87449 19.0423 9.83546 18.0929 10.3967 17.4837C10.958 16.8745 11.9074 16.8355 12.5166 17.3967L24.2281 28.1883L35.9395 17.3967C36.5487 16.8355 37.4981 16.8745 38.0595 17.4837C38.6207 18.0929 38.5816 19.0423 37.9724 19.6036L25.5836 31.0188L25.4351 31.1424C24.6718 31.7215 23.5905 31.6804 22.8725 31.0188L10.4837 19.6036Z" fill="#0F131A"/>
+          </svg>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <!-- ====== 导航栏组件 结束 ====== -->
+
+  <!-- 内容区域 -->
+  <div class="content-area">
+    <!-- ====== 输入气泡 开始 ====== -->
+    <div class="input-bubble-wrapper">
+      <div class="input-bubble">
+        <p>帮我规划一下从安阳出发去长沙玩三天两夜的行程</p>
+      </div>
+    </div>
+    <!-- ====== 输入气泡 结束 ====== -->
+
+    <!-- AI 回复内容 -->
+    <div class="article-content">
+      <h1>安阳出发 · 长沙三天两夜行程规划</h1>
+      
+      <h2>景点分布概览</h2>
+      <p>所选的6个景点均位于长沙核心城区，按湘江两岸可分为两组：</p>
+      
+      <!-- 表格：景点分布 -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>区域</th>
+              <th>景点</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>湘江西岸</strong></td>
+              <td>岳麓山、岳麓书院、橘子洲</td>
+            </tr>
+            <tr>
+              <td><strong>湘江东岸</strong></td>
+              <td>湖南博物馆、杜甫江阁、五一广场</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>大交通建议</h2>
+      <p><strong>安阳东 → 长沙南</strong>：高铁约 <strong>4.5 小时</strong>，建议乘坐早班车（约 7:00–7:30 发车），中午前即可抵达长沙。</p>
+      <p><strong>住宿推荐区域</strong>：五一广场 / 太平街附近，地铁直达各景点，夜晚也方便觅食逛街。</p>
+
+      <!-- ==================== Day 1 ==================== -->
+      <div class="day-header">
+        <div class="day-badge">Day 1</div>
+        <div class="day-title">抵达长沙 + 东岸人文线</div>
+      </div>
+      
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-time">上午</div>
+          <div class="timeline-title">高铁出发</div>
+          <div class="timeline-desc">安阳东站乘早班高铁，约中午 12:00 前抵达长沙南站，地铁 2 号线前往酒店放行李</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">下午 13:30 – 17:00</div>
+          <div class="timeline-title">湖南博物馆</div>
+          <div class="timeline-desc">约 3 小时，需提前在官方公众号预约免费门票。重点看「马王堆汉墓陈列」和辛追夫人、素纱襌衣等国宝</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">傍晚 – 夜晚 17:30 – 21:30</div>
+          <div class="timeline-title">五一广场 + 太平老街</div>
+          <div class="timeline-desc">步行逛太平老街、黄兴路步行街。晚餐 & 小吃：茶颜悦色、糖油粑粑、臭豆腐</div>
+        </div>
+      </div>
+
+      <!-- Day 1 景点图片 -->
+      <div class="poi-card">
+        <div class="poi-image" style="background-image: url('https://images.unsplash.com/photo-1598177183224-b3cec6da6b04?w=690&h=300&fit=crop');"></div>
+        <div class="poi-content">
+          <div class="poi-title">湖南博物院</div>
+          <div class="poi-desc">国家一级博物馆，馆藏文物18万余件，以马王堆汉墓出土文物最具特色。镇馆之宝包括辛追夫人遗体、素纱襌衣、T形帛画等国宝级文物。</div>
+          <div class="poi-tags">
+            <span class="poi-tag">4A景区</span>
+            <span class="poi-tag">免费预约</span>
+            <span class="poi-tag">建议3小时</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="poi-card">
+        <div class="poi-image" style="background-image: url('https://images.unsplash.com/photo-1671408330431-b3c3dd99f56c?w=690&h=300&fit=crop');"></div>
+        <div class="poi-content">
+          <div class="poi-title">五一广场 · 太平老街</div>
+          <div class="poi-desc">长沙最繁华的商业中心，太平老街是保存最完整的古街之一。夜晚灯火辉煌，茶颜悦色、黑色经典臭豆腐、糖油粑粑等美食云集，感受长沙夜生活的最佳去处。</div>
+          <div class="poi-tags">
+            <span class="poi-tag">免费</span>
+            <span class="poi-tag">美食街</span>
+            <span class="poi-tag">夜景</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Day 2 ==================== -->
+      <div class="day-header">
+        <div class="day-badge">Day 2</div>
+        <div class="day-title">湘江西岸深度游</div>
+      </div>
+      
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-time">上午 8:00 – 12:00</div>
+          <div class="timeline-title">岳麓山 + 岳麓书院</div>
+          <div class="timeline-desc">约 4 小时，建议从南门上山，沿途游览爱晚亭。岳麓书院门票 40 元，千年学府值得细品</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">中午 12:00 – 13:30</div>
+          <div class="timeline-title">大学城午餐</div>
+          <div class="timeline-desc">岳麓山大学城附近午餐，美食多且实惠</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">下午 14:00 – 17:30</div>
+          <div class="timeline-title">橘子洲</div>
+          <div class="timeline-desc">约 3 小时，地铁 2 号线直达。建议乘坐观光小火车（单程 20 元）至毛泽东青年艺术雕塑</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">傍晚 – 夜晚 18:00 – 20:30</div>
+          <div class="timeline-title">杜甫江阁</div>
+          <div class="timeline-desc">约 1–1.5 小时，日落时分最佳，登阁远望湘江与橘子洲，夜景绝美</div>
+        </div>
+      </div>
+
+      <!-- Day 2 景点图片 -->
+      <div class="poi-card">
+        <div class="poi-image" style="background-image: url('https://images.unsplash.com/photo-1578453223871-970d2d15b57a?w=690&h=300&fit=crop');"></div>
+        <div class="poi-content">
+          <div class="poi-title">岳麓山 · 岳麓书院</div>
+          <div class="poi-desc">海拔300.8米，是南岳衡山余脉，自古以「岳麓之胜，甲于相湘」闻名。岳麓书院是中国四大书院之一，始建于北宋，有「千年学府」之称，是中国古代教育史上的璀璨明珠。</div>
+          <div class="poi-tags">
+            <span class="poi-tag">5A景区</span>
+            <span class="poi-tag">免费开放</span>
+            <span class="poi-tag">书院门票¥40</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="poi-card">
+        <div class="poi-image" style="background-image: url('https://images.unsplash.com/photo-1683041134049-28843fae8c1f?w=690&h=300&fit=crop');"></div>
+        <div class="poi-content">
+          <div class="poi-title">橘子洲</div>
+          <div class="poi-desc">湘江中最大的名洲，被誉为「中国第一洲」。洲头矗立着毛泽东青年艺术雕塑，是长沙标志性景观。全长5公里，沿江漫步可欣赏湘江两岸城市天际线。</div>
+          <div class="poi-tags">
+            <span class="poi-tag">5A景区</span>
+            <span class="poi-tag">免费开放</span>
+            <span class="poi-tag">观光车¥20</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="poi-card">
+        <div class="poi-image" style="background-image: url('https://images.unsplash.com/photo-1716892230094-7233225ab383?w=690&h=300&fit=crop');"></div>
+        <div class="poi-content">
+          <div class="poi-title">杜甫江阁</div>
+          <div class="poi-desc">为纪念唐代诗人杜甫而建，位于湘江之滨。登阁可远眺橘子洲和湘江美景，夜晚灯光璀璨，是观赏长沙夜景的绝佳位置。每周六晚夏季有烟花表演。</div>
+          <div class="poi-tags">
+            <span class="poi-tag">免费</span>
+            <span class="poi-tag">登阁¥20</span>
+            <span class="poi-tag">夜景</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== Day 3 ==================== -->
+      <div class="day-header">
+        <div class="day-badge">Day 3</div>
+        <div class="day-title">自由时间 + 返程</div>
+      </div>
+      
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-time">上午 8:30 – 12:00</div>
+          <div class="timeline-title">自由安排</div>
+          <div class="timeline-desc">方案A：睡到自然醒，逛黄兴路步行街补购伴手礼<br>方案B：打卡IFS国金中心KAWS雕塑、坡子街尝早餐粉面<br>方案C：重游某个意犹未尽的景点</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">中午</div>
+          <div class="timeline-title">湘菜收官</div>
+          <div class="timeline-desc">品尝一顿正宗湘菜作为收官（推荐：费大厨辣椒炒肉、炊烟时代）</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">下午</div>
+          <div class="timeline-title">返程</div>
+          <div class="timeline-desc">长沙南站 → 安阳东站，建议乘坐 14:00–15:00 左右的高铁</div>
+        </div>
+      </div>
+
+      <!-- Day 3 美食图片 -->
+      <div class="poi-card">
+        <div class="poi-image" style="background-image: url('https://images.unsplash.com/photo-1672636401225-ec3d4025a4af?w=690&h=300&fit=crop');"></div>
+        <div class="poi-content">
+          <div class="poi-title">长沙美食推荐</div>
+          <div class="poi-desc">湘菜以辣闻名，推荐尝试：费大厨辣椒炒肉（必吃榜第一）、炊烟小炒黄牛肉、茶颜悦色（幽兰拿铁）、黑色经典臭豆腐、糖油粑粑、口味虾等。</div>
+          <div class="poi-tags">
+            <span class="poi-tag">湘菜</span>
+            <span class="poi-tag">小吃</span>
+            <span class="poi-tag">奶茶</span>
+          </div>
+        </div>
+      </div>
+
+      <h2>预算参考（人均）</h2>
+      <div class="budget-card">
+        <div class="budget-row">
+          <span class="budget-label">高铁往返</span>
+          <span class="budget-value">¥600–800</span>
+        </div>
+        <div class="budget-row">
+          <span class="budget-label">住宿 2 晚</span>
+          <span class="budget-value">¥400–700</span>
+        </div>
+        <div class="budget-row">
+          <span class="budget-label">餐饮 + 小吃</span>
+          <span class="budget-value">¥300–500</span>
+        </div>
+        <div class="budget-row">
+          <span class="budget-label">景点门票 + 交通</span>
+          <span class="budget-value">¥150–200</span>
+        </div>
+        <div class="budget-row">
+          <span class="budget-label">合计</span>
+          <span class="budget-total">¥1,450 – 2,200</span>
+        </div>
+      </div>
+
+      <!-- 提示框 -->
+      <div class="tip-box">
+        <div class="tip-box-title">实用提示</div>
+        <div class="tip-box-content">
+          • 湖南博物馆务必提前 1–3 天线上预约，旺季名额紧张<br>
+          • 长沙夏季高温闷热，注意防晒补水<br>
+          • 地铁 2 号线串联所有景点，是出行主力线路<br>
+          • 网红餐厅排队时间长，可选择工作日或非饭点前往
+        </div>
+      </div>
+
+      <p style="margin-top: 36px; color: var(--color-midgray);">祝长沙之行顺利，吃好玩好 🍊</p>
+    </div>
+
+    <!-- ====== 点赞与分享组件 开始 ====== -->
+    <div class="feedback-section">
+      <p class="disclaimer">回答由AI生成，内容仅供参考</p>
+      <div class="feedback-actions">
+        <div class="feedback-buttons">
+          <button class="feedback-btn" aria-label="点赞">
+            <img src="https://gw.alicdn.com/imgextra/i2/O1CN01SFT3RD2A6aeMxtJOt_!!6000000008154-2-tps-64-64.png" alt="点赞" width="32" height="32">
+          </button>
+          <button class="feedback-btn" aria-label="点踩">
+            <img src="https://gw.alicdn.com/imgextra/i1/O1CN01EUrI4o1bOtvujdMCF_!!6000000003456-2-tps-64-64.png" alt="点踩" width="32" height="32">
+          </button>
+          <button class="feedback-btn" aria-label="分享">
+            <img src="https://gw.alicdn.com/imgextra/i1/O1CN01f5oE2k1DYTQtfTRCH_!!6000000000228-2-tps-64-64.png" alt="分享" width="32" height="32">
+          </button>
+        </div>
+        <button class="thinking-btn">
+          <img src="https://gw.alicdn.com/imgextra/i2/O1CN01Xqbrpd1jOus8H3PtA_!!6000000004539-2-tps-84-84.png" alt="思考链图标" width="42" height="42">
+          <span>已完成</span>
+        </button>
+      </div>
+    </div>
+    <!-- ====== 点赞与分享组件 结束 ====== -->
+
+    <!-- ====== 追问组件 开始 ====== -->
+    <div class="follow-up-section">
+      <p class="follow-up-title">你还可以问：</p>
+      <div class="follow-up-items">
+        <a href="#" class="follow-up-item">
+          <span>帮我预订长沙的酒店</span>
+          <img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" alt="箭头" width="20" height="20">
+        </a>
+        <a href="#" class="follow-up-item">
+          <span>查询安阳到长沙的高铁票</span>
+          <img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" alt="箭头" width="20" height="20">
+        </a>
+        <a href="#" class="follow-up-item">
+          <span>长沙有哪些必吃美食？</span>
+          <img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" alt="箭头" width="20" height="20">
+        </a>
+        <a href="#" class="follow-up-item">
+          <span>生成详细的每日行程表</span>
+          <img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" alt="箭头" width="20" height="20">
+        </a>
+      </div>
+    </div>
+    <!-- ====== 追问组件 结束 ====== -->
+  </div>
+
+  <!-- ====== 底部输入区组件 开始 ====== -->
+  <div class="bottom-input-area">
+    <img
+      src="https://gw.alicdn.com/imgextra/i3/O1CN01A7yDG91iDdVASDjP3_!!6000000004379-2-tps-1500-516.png"
+      alt="底部输入区"
+    >
+  </div>
+  <!-- ====== 底部输入区组件 结束 ====== -->
+
+  <script>
+    // 追问项点击效果
+    document.querySelectorAll('.follow-up-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        const text = this.querySelector('span').textContent;
+        alert('点击了：' + text);
+      });
+    });
+
+    // 反馈按钮点击效果
+    document.querySelectorAll('.feedback-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const alt = this.getAttribute('aria-label');
+        this.style.background = 'var(--color-indigo-4)';
+        setTimeout(() => {
+          this.style.background = '';
+        }, 300);
+      });
+    });
+  </script>
+</body>
+</html>
