@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=750, user-scalable=no">
+  <title>Test</title>
+  <style>
+    body { background: #f2f3f5; font-family: 'PingFang SC', sans-serif; width: 750px; }
+    .content-area { padding: 100px 30px; }
+  </style>
+</head>
+<body>
+<div class="content-area" id="chat"></div>
+<script>
+const chat = document.getElementById('chat');
+function append(html) { 
+  const d = document.createElement('div'); 
+  d.innerHTML = html; 
+  while(d.firstChild) chat.appendChild(d.firstChild); 
+}
+function start() {
+  append('<div style="padding:20px;background:white;border-radius:10px;">Test content loaded!</div>');
+}
+start();
+</script>
+</body>
+</html>

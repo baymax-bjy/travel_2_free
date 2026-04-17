@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=750, user-scalable=no">
+  <title>飞猪千问 · 行程规划 Agent Demo (Grid版)</title>
+  <style>
+    @font-face {
+      font-family: 'Fliggy Sans 102';
+      src: url('https://g.alicdn.com/trip/common-assets/1.1.9/fonts/FliggySans102-Md.ttf') format('truetype');
+      font-weight: 500;
+      font-display: swap;
+    }
+    :root {
+      --color-darkgray: #0f131a;
+      --color-midgray: #5c5f66;
+      --color-lightgray: #919499;
+      --color-indigo-1: #6666ff;
+      --color-indigo-4: #EBEBFF;
+      --color-warning-1: #ff3333;
+      --color-pay-1: #ff5533;
+      --color-white: #ffffff;
+      --color-label: #F7F8FA;
+      --color-bg: #f2f3f5;
+      --radius-xl: 36px;
+      --radius-l: 24px;
+      --radius-m: 12px;
+      --radius-s: 6px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--color-label);
+      font-family: 'PingFang SC', 'SimHei', sans-serif;
+      width: 750px;
+      overflow-x: hidden;
+    }
+    .content-area {
+      padding: 176px 30px 258px;
+      width: 750px;
+      min-height: 100vh;
+    }
+
+    /* ===== 用户气泡 ===== */
+    .user-bubble-wrap {
+      display: flex;
+      justify-content: flex-end;
+      padding: 24px 0;
+      width: 690px;
+      opacity: 0; transform: translateY(12px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .user-bubble-wrap.visible { opacity: 1; transform: translateY(0); }
+    .user-bubble {
+      max-width: 600px; padding: 30px;
+      background: linear-gradient(180deg, #E4E4FF 0%, #EDEDFF 100%);
+      border-radius: var(--radius-xl);
+    }
+    .user-bubble p {
+      font-weight: 500; font-size: 30px; line-height: 140%;
+      color: var(--color-darkgray); word-wrap: break-word;
+    }
+
+    /* ===== AI 回复块 ===== */
+    .ai-block {
+      width: 690px; padding: 24px 0;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .ai-block.visible { opacity: 1; transform: translateY(0); }
+
+    /* ===== 打字动画 ===== */
+    .typing-indicator { display: inline-flex; align-items: center; gap: 8px; padding: 20px 0; }
+    .typing-indicator .dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--color-indigo-1); opacity: 0.3;
+      animation: bounce 1.2s infinite ease-in-out;
+    }
+    .typing-indicator .dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-indicator .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%,60%,100% { opacity:0.3; transform:translateY(0); }
+      30% { opacity:1; transform:translateY(-8px); }
+    }
+
+    /* ===== 文本 ===== */
+    .article h2 {
+      font-size: 36px; font-weight: 500; line-height: 1.4;
+      color: var(--color-darkgray); margin-top: 36px;
+    }
+    .article h2:first-child { margin-top: 0; }
+    .article h3 {
+      font-size: 30px; font-weight: 500; line-height: 1.4;
+      color: var(--color-darkgray); margin-top: 30px;
+    }
+    .article p {
+      font-size: 28px; font-weight: 400; line-height: 1.7;
+      color: var(--color-darkgray); margin-top: 16px;
+    }
+    .article p:first-child { margin-top: 0; }
+    .article ul {
+      margin-top: 12px; padding-left: 36px;
+      font-size: 28px; line-height: 1.7; color: var(--color-darkgray);
+    }
+    .article ul li { margin-top: 8px; }
+
+    /* ===== 版本标签 ===== */
+    .version-tag {
+      display: inline-flex; align-items: center; gap: 10px;
+      height: 52px; padding: 0 24px;
+      background: linear-gradient(135deg, #EBEBFF 0%, #E4E4FF 100%);
+      border-radius: var(--radius-l);
+      font-size: 24px; font-weight: 600; color: var(--color-indigo-1);
+      margin-bottom: 20px;
+    }
+
+    /* ===== 行程卡片 ===== */
+    .itinerary-card {
+      width: 690px; margin-top: 24px;
+      border-radius: var(--radius-xl);
+      background: var(--color-white);
+      overflow: hidden;
+    }
+    .itinerary-card-header {
+      padding: 30px 30px 18px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid rgba(15,19,26,0.06);
+    }
+    .itinerary-card-header .badge {
+      height: 48px; padding: 0 20px;
+      background: var(--color-indigo-4); border-radius: var(--radius-l);
+      font-size: 24px; font-weight: 500; color: var(--color-indigo-1);
+      display: inline-flex; align-items: center;
+    }
+    .itinerary-card-header .title {
+      font-size: 32px; font-weight: 500; color: var(--color-darkgray);
+    }
+
+    /* === 路线概览 === */
+    .route-overview {
+      padding: 24px 30px;
+      border-bottom: 1px solid rgba(15,19,26,0.06);
+    }
+    .route-tag-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+    .route-tag {
+      height: 48px; padding: 0 18px;
+      background: var(--color-label); border-radius: var(--radius-m);
+      font-size: 24px; color: var(--color-midgray);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+
+    /* === 每日行程 === */
+    .day-section { border-bottom: 1px solid rgba(15,19,26,0.06); }
+    .day-section:last-child { border-bottom: none; }
+    .day-header {
+      padding: 24px 30px 0;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .day-num {
+      font-family: 'Fliggy Sans 102','PingFang SC',sans-serif;
+      font-size: 32px; font-weight: bold; color: var(--color-indigo-1);
+    }
+    .day-theme { font-size: 28px; font-weight: 500; color: var(--color-darkgray); }
+    .day-body { padding: 14px 30px 24px; }
+    .time-slot {
+      display: flex; gap: 18px; padding: 14px 0;
+      border-bottom: 1px solid rgba(15,19,26,0.03);
+    }
+    .time-slot:last-child { border-bottom: none; }
+    .time-label {
+      flex-shrink: 0; width: 90px;
+      font-size: 24px; font-weight: 500; color: var(--color-indigo-1);
+      padding-top: 2px;
+    }
+    .slot-info { flex: 1; }
+    .slot-title { font-size: 28px; font-weight: 500; color: var(--color-darkgray); line-height: 1.5; }
+    .slot-desc { font-size: 24px; color: var(--color-midgray); line-height: 1.5; margin-top: 4px; }
+    .slot-img {
+      width: 130px; height: 94px;
+      border-radius: var(--radius-m);
+      background-size: cover; background-position: center;
+      background-color: #E0E0E0; flex-shrink: 0;
+    }
+
+    /* === 手绘地图 === */
+    .map-section {
+      padding: 24px 30px;
+      border-bottom: 1px solid rgba(15,19,26,0.06);
+    }
+    .map-box {
+      width: 100%; height: 360px;
+      border-radius: var(--radius-l);
+      overflow: hidden; position: relative;
+      background: #e8e8e8;
+    }
+    .map-box canvas { width: 100%; height: 100%; }
+
+    /* === 信息模块（住宿/美食/交通/预算/贴士） === */
+    .info-module { padding: 24px 30px; border-bottom: 1px solid rgba(15,19,26,0.06); }
+    .info-module:last-child { border-bottom: none; }
+    .info-module-title {
+      font-size: 28px; font-weight: 500; color: var(--color-darkgray);
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .info-module-title .icon { font-size: 26px; }
+    .info-item {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(15,19,26,0.03);
+    }
+    .info-item:last-child { border-bottom: none; }
+    .info-item-img {
+      width: 100px; height: 76px;
+      border-radius: var(--radius-m);
+      background-size: cover; background-position: center;
+      background-color: #E0E0E0; flex-shrink: 0;
+    }
+    .info-item-body { flex: 1; }
+    .info-item-name { font-size: 26px; font-weight: 500; color: var(--color-darkgray); }
+    .info-item-desc { font-size: 22px; color: var(--color-midgray); margin-top: 4px; line-height: 1.4; }
+    .info-item-price {
+      font-family: 'Fliggy Sans 102','PingFang SC',sans-serif;
+      font-size: 28px; font-weight: bold; color: var(--color-pay-1);
+      margin-top: 4px;
+    }
+    .info-text { font-size: 26px; color: var(--color-midgray); line-height: 1.6; }
+
+    /* === 预算表 === */
+    .budget-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .budget-table td {
+      padding: 14px 0; font-size: 26px; color: var(--color-darkgray);
+      border-bottom: 1px solid rgba(15,19,26,0.06);
+    }
+    .budget-table td:last-child {
+      text-align: right;
+      font-family: 'Fliggy Sans 102','PingFang SC',sans-serif;
+      font-weight: bold;
+    }
+    .budget-table tr:last-child td {
+      border-bottom: none; font-weight: 600;
+      color: var(--color-indigo-1);
+    }
+
+    /* ===== 选择器（网格布局 - 旧版） ===== */
+    .selector-wrap { width: 690px; padding-top: 24px; }
+    .selector-title {
+      font-size: 28px; font-weight: 500; color: var(--color-darkgray);
+      margin-bottom: 18px;
+    }
+    .selector-group { margin-bottom: 24px; }
+    .selector-group-label {
+      font-size: 24px; font-weight: 500; color: var(--color-midgray);
+      margin-bottom: 12px;
+    }
+    .selector-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    }
+    .selector-grid.three-col { grid-template-columns: repeat(3, 1fr); }
+    .selector-option {
+      min-height: 84px; display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: 16px 12px; gap: 4px;
+      background: var(--color-white);
+      border: 1.5px solid rgba(15,19,26,0.12);
+      border-radius: var(--radius-l);
+      font-size: 28px; font-weight: 500; color: #000;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .selector-option:active { transform: scale(0.97); }
+    .selector-option .opt-desc { font-size: 22px; font-weight: 400; color: var(--color-lightgray); }
+    .selector-option.is-active {
+      background: var(--color-indigo-4);
+      border-color: var(--color-indigo-1);
+    }
+    .selector-option.is-disabled { opacity: 0.5; pointer-events: none; }
+
+    .confirm-btn {
+      width: 100%; height: 84px; margin-top: 24px;
+      display: flex; justify-content: center; align-items: center;
+      background: var(--color-indigo-4); border-radius: var(--radius-l);
+      border: none; font-family: 'PingFang SC',sans-serif;
+      font-size: 28px; font-weight: 500; color: var(--color-indigo-1);
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .confirm-btn:hover { background: #dcdbff; }
+    .confirm-btn:active { transform: scale(0.98); }
+    .confirm-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ===== 点赞分享 ===== */
+    .like-share { width: 690px; padding-top: 24px; display: flex; flex-direction: column; gap: 18px; }
+    .like-share .disclaimer { font-size: 24px; color: var(--color-lightgray); }
+    .like-share .action-row { display: flex; justify-content: space-between; align-items: center; }
+    .like-share .btn-group { display: flex; gap: 12px; }
+    .action-btn {
+      width: 72px; height: 72px;
+      display: flex; justify-content: center; align-items: center;
+      background: var(--color-white);
+      border: 1px solid rgba(15,19,26,0.12);
+      border-radius: var(--radius-l); cursor: pointer; padding: 0;
+    }
+    .action-btn:active { transform: scale(0.92); }
+    .think-btn {
+      display: flex; align-items: center; padding: 18px; gap: 12px;
+      height: 72px; background: var(--color-white);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--radius-l); cursor: pointer;
+    }
+    .think-btn span { font-size: 26px; color: var(--color-darkgray); }
+
+    /* ===== 追问 ===== */
+    .followup-wrap { width: 690px; margin-top: 42px; display: flex; flex-direction: column; gap: 18px; }
+    .followup-wrap .guide { font-size: 30px; line-height: 1.7; color: var(--color-darkgray); }
+    .followup-list { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+    .followup-item {
+      display: inline-flex; align-items: center; gap: 12px;
+      height: 84px; padding: 24px;
+      background: var(--color-white);
+      border: 1px solid rgba(15,19,26,0.12);
+      border-radius: var(--radius-l); text-decoration: none; cursor: pointer;
+    }
+    .followup-item:active { background: var(--color-bg); }
+    .followup-item span { font-size: 26px; color: var(--color-darkgray); white-space: nowrap; }
+
+    /* ===== 重启 ===== */
+    .restart-btn {
+      width: 690px; height: 80px; margin-top: 36px;
+      display: flex; justify-content: center; align-items: center;
+      background: var(--color-white);
+      border: 1px solid rgba(15,19,26,0.12);
+      border-radius: var(--radius-l);
+      font-size: 28px; font-weight: 500; color: var(--color-indigo-1);
+      cursor: pointer;
+    }
+    .restart-btn:active { background: var(--color-indigo-4); }
+
+    .hidden { display: none !important; }
+    .fade-in { animation: fadeIn 0.5s ease forwards; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+</head>
+<body>
+
+<!-- ====== 导航栏 ====== -->
+<div style="position:fixed;top:0;left:0;width:750px;height:176px;z-index:9999;display:flex;flex-direction:column;">
+  <div style="width:750px;height:88px;flex-shrink:0;">
+    <svg width="750" height="88" viewBox="0 0 750 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="750" height="88" fill="#F7F8FA"/>
+      <text x="52" y="55" font-size="24" font-weight="bold" fill="#0F131A">9:41</text>
+      <rect opacity=".35" x="678" y="34" width="42" height="21" rx="4" fill="#0F131A" stroke="#0F131A" stroke-width="2"/>
+      <rect x="681" y="37" width="36" height="15" rx="3" fill="#0F131A"/>
+    </svg>
+  </div>
+  <nav style="display:flex;justify-content:space-between;align-items:center;padding:0 24px;width:750px;height:88px;background:#F7F8FA;">
+    <div style="width:48px;height:48px;display:flex;justify-content:center;align-items:center;cursor:pointer;">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M38.5 10.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-29c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5h29zM28.5 22.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-19c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5h19zM33.5 34.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-24c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5h24z" fill="#0F131A"/></svg>
+    </div>
+    <h1 style="font-weight:500;font-size:36px;color:#0F131A;">飞猪千问</h1>
+    <div style="display:flex;gap:18px;">
+      <div style="width:48px;height:48px;display:flex;justify-content:center;align-items:center;cursor:pointer;">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><path d="M24 7.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5H12c-1.93 0-3.5 1.57-3.5 3.5v24.18l3.31-3.56c.66-.71 1.59-1.12 2.56-1.12H36c1.93 0 3.5-1.57 3.5-3.5v-6.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5V30c0 3.59-2.91 6.5-6.5 6.5H14.37c-.14 0-.27.06-.37.16l-4.17 4.49c-1.55 1.67-4.33.56-4.33-1.71V14c0-3.59 2.91-6.5 6.5-6.5H24z" fill="black"/><path d="M36.45 3.99c.83 0 1.5.67 1.5 1.5V11h5.55c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-5.55v5.49c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5V14h-5.45c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5h5.45V5.49c0-.83.67-1.5 1.5-1.5z" fill="black"/></svg>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- ====== 内容区 ====== -->
+<div class="content-area" id="chat"></div>
+
+<!-- ====== 底部输入 ====== -->
+<div style="position:fixed;bottom:0;left:0;width:750px;height:258px;z-index:9998;">
+  <img src="https://gw.alicdn.com/imgextra/i3/O1CN01A7yDG91iDdVASDjP3_!!6000000004379-2-tps-1500-516.png" style="width:100%;height:100%;display:block;">
+</div>
+
+<script>
+// ==================================================================
+// 行程规划 Agent — 3轮迭代引擎 (Grid版)
+// ==================================================================
+const chat = document.getElementById('chat');
+const U = (id, w, h) => `https://images.unsplash.com/photo-${id}?w=${w}&h=${h}&fit=crop&q=80`;
+
+// ---------- 工具函数 ----------
+function scrollBottom() { setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 120); }
+function append(html) { const d = document.createElement('div'); d.innerHTML = html; while(d.firstChild) chat.appendChild(d.firstChild); }
+function show(el) { requestAnimationFrame(() => el.classList.add('visible')); }
+
+function showTyping() {
+  const id = 'tp-' + Date.now();
+  append(`<div class="ai-block visible" id="${id}"><div class="typing-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`);
+  scrollBottom();
+  return id;
+}
+function removeTyping(id) { document.getElementById(id)?.remove(); }
+
+function addBubble(text) {
+  const id = 'ub-' + Date.now();
+  append(`<div class="user-bubble-wrap" id="${id}"><div class="user-bubble"><p>${text}</p></div></div>`);
+  setTimeout(() => show(document.getElementById(id)), 50);
+  scrollBottom();
+}
+
+// ---------- 手绘地图绘制 ----------
+function drawMap(canvasId, points, color) {
+  setTimeout(() => {
+    const c = document.getElementById(canvasId);
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    c.width = c.offsetWidth * 2; c.height = c.offsetHeight * 2;
+    ctx.scale(2, 2);
+    const W = c.offsetWidth, H = c.offsetHeight;
+    ctx.fillStyle = '#f0f0f0'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 0.5;
+    for (let x=0; x<W; x+=30) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y=0; y<H; y+=30) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    ctx.strokeStyle = color || '#6666ff'; ctx.lineWidth = 3;
+    ctx.setLineDash([8,6]); ctx.lineJoin = 'round';
+    ctx.beginPath();
+    points.forEach((p,i) => { i===0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); });
+    ctx.stroke(); ctx.setLineDash([]);
+    points.forEach((p, i) => {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI*2);
+      ctx.fillStyle = color || '#6666ff'; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+      ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.font = '500 13px PingFang SC, sans-serif'; ctx.fillStyle = '#0f131a';
+      ctx.fillText(p.label, p.x + 12, p.y + 5);
+    });
+  }, 200);
+}
+
+// ===================================================================
+// 数据
+// ===================================================================
+
+// ---- V1 骨架行程（概要版）----
+function renderV1() {
+  const mapId = 'map-v1';
+  return `
+    <div class="version-tag">📋 V1 · 行程骨架</div>
+    <div class="itinerary-card">
+      <div class="itinerary-card-header">
+        <span class="badge">初版概要</span>
+        <span class="title">东京 5 日游</span>
+      </div>
+      <div class="route-overview">
+        <div style="font-size:26px;font-weight:500;color:var(--color-darkgray);">🗺️ 路线概览</div>
+        <div class="route-tag-row">
+          <span class="route-tag">📍 浅草</span>
+          <span class="route-tag">→ 上野</span>
+          <span class="route-tag">→ 涩谷</span>
+          <span class="route-tag">→ 新宿</span>
+          <span class="route-tag">→ 镰仓</span>
+        </div>
+      </div>
+      <div class="map-section">
+        <div style="font-size:26px;font-weight:500;color:var(--color-darkgray);margin-bottom:14px;">🖊️ 路线示意图</div>
+        <div class="map-box"><canvas id="${mapId}"></canvas></div>
+      </div>
+      <div class="day-section">
+        <div class="day-header"><span class="day-num">DAY 1</span><span class="day-theme">抵达 · 浅草寺 · 晴空塔</span></div>
+        <div class="day-body"><div class="info-text">下午抵达东京，先逛浅草寺仲见世通，傍晚登晴空塔看夜景</div></div>
+      </div>
+      <div class="day-section">
+        <div class="day-header"><span class="day-num">DAY 2</span><span class="day-theme">明治神宫 · 原宿 · 涩谷</span></div>
+        <div class="day-body"><div class="info-text">清晨明治神宫，竹下通潮流打卡，涩谷十字路口</div></div>
+      </div>
+      <div class="day-section">
+        <div class="day-header"><span class="day-num">DAY 3</span><span class="day-theme">筑地市场 · 银座 · 东京塔</span></div>
+        <div class="day-body"><div class="info-text">清早筑地吃海鲜，银座购物，夜观东京塔</div></div>
+      </div>
+      <div class="day-section">
+        <div class="day-header"><span class="day-num">DAY 4</span><span class="day-theme">镰仓一日游</span></div>
+        <div class="day-body"><div class="info-text">镰仓大佛、江之电、灌篮高手打卡地、湘南海岸</div></div>
+      </div>
+      <div class="day-section">
+        <div class="day-header"><span class="day-num">DAY 5</span><span class="day-theme">新宿购物 · 返程</span></div>
+        <div class="day-body"><div class="info-text">新宿御苑散步，伊势丹买伴手礼，下午机场返程</div></div>
+      </div>
+    </div>
+  `;
+}
+
+// ---- V2 细化行程 ----
+function renderV2(choices) {
+  const isDetailed = choices.type?.includes('详细');
+  const isBudget = choices.focus?.includes('性价比');
+  const mapId = 'map-v2';
+  const hotelName = isBudget ? '东横INN 新宿歌舞伎町' : '新宿格拉斯丽酒店';
+  const hotelPrice = isBudget ? '¥380/晚' : '¥850/晚';
+  const hotelDesc = isBudget ? '干净整洁，位置绝佳，24h便利店楼下' : '哥斯拉楼顶同款，新宿站步行5分钟';
+  const hotelImg = isBudget ? '1758805768368-0e75b108b9f5' : '1569664370706-e26397378b09';
+
+  return `
+    <div class="version-tag">📝 V2 · 细化版行程</div>
+    <div class="itinerary-card">
+      <div class="itinerary-card-header">
+        <span class="badge">第二版</span>
+        <span class="title">东京 5 日${isBudget ? '高性价比' : '品质'}之旅</span>
+      </div>
+      <div class="route-overview">
+        <div style="font-size:26px;font-weight:500;color:var(--color-darkgray);">🗺️ 路线概览</div>
+        <div class="route-tag-row">
+          <span class="route-tag">📍 成田机场</span>
+          <span class="route-tag">→ 浅草/上野</span>
+          <span class="route-tag">→ 涩谷/原宿</span>
+          <span class="route-tag">→ 筑地/银座</span>
+          <span class="route-tag">→ 镰仓</span>
+          <span class="route-tag">→ 新宿</span>
+        </div>
+      </div>
+      <div class="map-section">
+        <div style="font-size:26px;font-weight:500;color:var(--color-darkgray);margin-bottom:14px;">🖊️ 路线示意图</div>
+        <div class="map-box"><canvas id="${mapId}"></canvas></div>
+      </div>
+
+      ${renderV2Days(isDetailed, isBudget)}
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🏨</span>住宿推荐</div>
+        <div class="info-item">
+          <div class="info-item-img" style="background-image:url('${U(hotelImg,200,150)}')"></div>
+          <div class="info-item-body">
+            <div class="info-item-name">${hotelName}</div>
+            <div class="info-item-desc">${hotelDesc}</div>
+            <div class="info-item-price">${hotelPrice}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🍜</span>美食推荐</div>
+        <div class="info-item">
+          <div class="info-item-img" style="background-image:url('${U('1694370596449-eff77fd905b3',200,150)}')"></div>
+          <div class="info-item-body">
+            <div class="info-item-name">${isBudget ? '矶丸水产 新宿店' : '鮨 さいとう（寿司斋藤）'}</div>
+            <div class="info-item-desc">${isBudget ? '24h营业，烤海鲜拼盘性价比超高' : '米其林三星，需提前3个月预约'}</div>
+            <div class="info-item-price">${isBudget ? '¥80-150/人' : '¥2000+/人'}</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-item-img" style="background-image:url('${U('1711633648896-b4e82f6aea59',200,150)}')"></div>
+          <div class="info-item-body">
+            <div class="info-item-name">${isBudget ? '一兰拉面 涩谷店' : '蟹道乐 银座本店'}</div>
+            <div class="info-item-desc">${isBudget ? '一人一位隔间，浓郁豚骨汤头' : '帝王蟹全席，季节限定'}</div>
+            <div class="info-item-price">${isBudget ? '¥60/人' : '¥800-1200/人'}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🚃</span>交通方案</div>
+        <div class="info-text">${isBudget
+          ? '推荐购买「Tokyo Subway 72h Ticket」¥1500，覆盖东京Metro全线 + 都营地铁，5天内最划算。往返成田机场用 Skyliner（¥2470）。'
+          : '推荐购买 Suica 卡随刷随走，灵活自由。往返机场选利木津巴士直达酒店（¥3200），省去拖行李换乘。Day4 镰仓用 JR 通票。'}</div>
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">💰</span>预算估算</div>
+        <table class="budget-table">
+          <tr><td>✈️ 往返机票</td><td>${isBudget ? '¥2,800' : '¥4,500'}</td></tr>
+          <tr><td>🏨 住宿 (4晚)</td><td>${isBudget ? '¥1,520' : '¥3,400'}</td></tr>
+          <tr><td>🚃 市内交通</td><td>${isBudget ? '¥600' : '¥1,200'}</td></tr>
+          <tr><td>🍜 餐饮</td><td>${isBudget ? '¥1,500' : '¥4,000'}</td></tr>
+          <tr><td>🎫 门票/体验</td><td>${isBudget ? '¥400' : '¥1,500'}</td></tr>
+          <tr><td>🛍️ 购物/备用</td><td>${isBudget ? '¥1,000' : '¥3,000'}</td></tr>
+          <tr><td><b>合计（约）</b></td><td><b>${isBudget ? '¥7,820' : '¥17,600'}</b></td></tr>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ---- V2 调整后行程 ----
+function renderV2Adjusted(choices) {
+  const isDetailed = choices.type?.includes('详细');
+  const isBudget = choices.focus?.includes('性价比');
+  const budgetFeel = choices.budgetFeel;
+  const adjust = choices.adjust;
+  const mapId = 'map-v2-adj';
+  
+  const isHigherBudget = budgetFeel === '可以更高';
+  const isLowerBudget = budgetFeel === '偏高';
+  
+  let hotelName, hotelPrice, hotelDesc, hotelImg;
+  if (isBudget) {
+    if (isLowerBudget) {
+      hotelName = '新宿华盛顿酒店';
+      hotelPrice = '¥320/晚';
+      hotelDesc = '老牌商务酒店，房间紧凑但五脏俱全';
+      hotelImg = '1629140727571-9b5c6f6267b4';
+    } else {
+      hotelName = '东横INN 新宿歌舞伎町';
+      hotelPrice = '¥380/晚';
+      hotelDesc = '干净整洁，位置绝佳，24h便利店楼下';
+      hotelImg = '1758805768368-0e75b108b9f5';
+    }
+  } else {
+    if (isHigherBudget) {
+      hotelName = '东京君悦酒店';
+      hotelPrice = '¥1,800/晚';
+      hotelDesc = '六本木核心，东京塔景观，五星服务';
+      hotelImg = '1542314831-391a3c8f7c0a';
+    } else {
+      hotelName = '新宿格拉斯丽酒店';
+      hotelPrice = '¥850/晚';
+      hotelDesc = '哥斯拉楼顶同款，新宿站步行5分钟';
+      hotelImg = '1569664370706-e26397378b09';
+    }
+  }
+
+  let dayAdjustText = '';
+  if (adjust === '换景点') dayAdjustText = '已根据你的兴趣替换了部分景点';
+  else if (adjust === '加紧凑') dayAdjustText = '行程已加密，每天安排更充实';
+  else if (adjust === '更轻松') dayAdjustText = '已减少每日景点，留出自由时间';
+
+  return `
+    <div class="version-tag" style="background:linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);color:#2E7D32;">📝 V2.5 · 调整后行程</div>
+    <div class="itinerary-card">
+      <div class="itinerary-card-header">
+        <span class="badge" style="background:#2E7D32;color:#fff;">已调整</span>
+        <span class="title">东京 5 日${isBudget ? (isLowerBudget ? '经济' : '高性价比') : (isHigherBudget ? '奢华' : '品质')}之旅</span>
+      </div>
+      <div class="route-overview">
+        <div style="font-size:26px;font-weight:500;color:var(--color-darkgray);">🗺️ 路线概览 ${dayAdjustText ? `<span style="font-size:22px;color:#2E7D32;margin-left:10px;">${dayAdjustText}</span>` : ''}</div>
+        <div class="route-tag-row">
+          <span class="route-tag">📍 成田机场</span>
+          <span class="route-tag">→ 浅草/上野</span>
+          <span class="route-tag">→ 涩谷/原宿</span>
+          <span class="route-tag">→ 筑地/银座</span>
+          <span class="route-tag">→ 镰仓</span>
+          <span class="route-tag">→ 新宿</span>
+        </div>
+      </div>
+      <div class="map-section">
+        <div style="font-size:26px;font-weight:500;color:var(--color-darkgray);margin-bottom:14px;">🖊️ 路线示意图</div>
+        <div class="map-box"><canvas id="${mapId}"></canvas></div>
+      </div>
+
+      ${renderV2DaysAdjusted(isDetailed, isBudget, adjust)}
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🏨</span>住宿推荐 ${budgetFeel ? `<span style="font-size:22px;color:#6666ff;margin-left:10px;">(${budgetFeel === '偏高' ? '已降级' : budgetFeel === '可以更高' ? '已升级' : '保持不变'})</span>` : ''}</div>
+        <div class="info-item">
+          <div class="info-item-img" style="background-image:url('${U(hotelImg,200,150)}')"></div>
+          <div class="info-item-body">
+            <div class="info-item-name">${hotelName}</div>
+            <div class="info-item-desc">${hotelDesc}</div>
+            <div class="info-item-price">${hotelPrice}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🍜</span>美食推荐</div>
+        ${renderAdjustedFood(isBudget, isLowerBudget, isHigherBudget)}
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🚃</span>交通方案</div>
+        <div class="info-text">${isBudget || isLowerBudget
+          ? '推荐购买「Tokyo Subway 72h Ticket」¥1500，覆盖东京Metro全线 + 都营地铁，5天内最划算。往返成田机场用 Skyliner（¥2470）。'
+          : '推荐购买 Suica 卡随刷随走，灵活自由。往返机场选利木津巴士直达酒店（¥3200），省去拖行李换乘。Day4 镰仓用 JR 通票。'}</div>
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">💰</span>预算估算</div>
+        <table class="budget-table">
+          <tr><td>✈️ 往返机票</td><td>${isBudget ? (isLowerBudget ? '¥2,400' : '¥2,800') : (isHigherBudget ? '¥6,500' : '¥4,500')}</td></tr>
+          <tr><td>🏨 住宿 (4晚)</td><td>${isBudget ? (isLowerBudget ? '¥1,280' : '¥1,520') : (isHigherBudget ? '¥7,200' : '¥3,400')}</td></tr>
+          <tr><td>🚃 市内交通</td><td>${isBudget ? '¥600' : '¥1,200'}</td></tr>
+          <tr><td>🍜 餐饮</td><td>${isBudget ? (isLowerBudget ? '¥1,200' : '¥1,500') : (isHigherBudget ? '¥6,000' : '¥4,000')}</td></tr>
+          <tr><td>🎫 门票/体验</td><td>${isBudget ? (isLowerBudget ? '¥350' : '¥400') : (isHigherBudget ? '¥3,000' : '¥1,500')}</td></tr>
+          <tr><td>🛍️ 购物/备用</td><td>${isBudget ? (isLowerBudget ? '¥800' : '¥1,000') : (isHigherBudget ? '¥5,000' : '¥3,000')}</td></tr>
+          <tr><td><b>合计（约）</b></td><td><b>${isBudget ? (isLowerBudget ? '¥6,630' : '¥7,820') : (isHigherBudget ? '¥26,700' : '¥17,600')}</b></td></tr>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function renderAdjustedFood(isBudget, isLowerBudget, isHigherBudget) {
+  if (isBudget && isLowerBudget) {
+    return `
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1723962807917-ffab0600929c',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">松屋/吉野家</div><div class="info-item-desc">经济实惠牛丼套餐</div><div class="info-item-price">¥25-40/人</div></div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1711633648896-b4e82f6aea59',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">一兰拉面</div><div class="info-item-desc">浓郁豚骨汤头</div><div class="info-item-price">¥60/人</div></div>
+      </div>`;
+  }
+  if (!isBudget && isHigherBudget) {
+    return `
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1694370596449-eff77fd905b3',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">鮨 さいとう</div><div class="info-item-desc">米其林三星寿司，需预约</div><div class="info-item-price">¥3,000+/人</div></div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1668072921663-604caa194507',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">叙叙苑 新宿店</div><div class="info-item-desc">高级和牛烧肉，夜景一流</div><div class="info-item-price">¥800/人</div></div>
+      </div>`;
+  }
+  return `
+    <div class="info-item">
+      <div class="info-item-img" style="background-image:url('${U('1694370596449-eff77fd905b3',200,150)}')"></div>
+      <div class="info-item-body"><div class="info-item-name">${isBudget ? '矶丸水产 新宿店' : '鮨 さいとう（寿司斋藤）'}</div><div class="info-item-desc">${isBudget ? '24h营业，烤海鲜拼盘性价比超高' : '米其林三星，需提前3个月预约'}</div><div class="info-item-price">${isBudget ? '¥80-150/人' : '¥2000+/人'}</div></div>
+    </div>
+    <div class="info-item">
+      <div class="info-item-img" style="background-image:url('${U('1711633648896-b4e82f6aea59',200,150)}')"></div>
+      <div class="info-item-body"><div class="info-item-name">${isBudget ? '一兰拉面 涩谷店' : '蟹道乐 银座本店'}</div><div class="info-item-desc">${isBudget ? '一人一位隔间，浓郁豚骨汤头' : '帝王蟹全席，季节限定'}</div><div class="info-item-price">${isBudget ? '¥60/人' : '¥800-1200/人'}</div></div>
+    </div>`;
+}
+
+function renderV2DaysAdjusted(detail, budget, adjust) {
+  let day3Theme = '美食与城市地标';
+  let day4Theme = '镰仓一日游';
+  let day5Theme = '轻松收尾 · 满载而归';
+  
+  if (adjust === '加紧凑') {
+    day3Theme = '美食+购物+地标打卡';
+    day4Theme = '镰仓深度游+江之岛';
+    day5Theme = '最后冲刺+返程';
+  } else if (adjust === '更轻松') {
+    day3Theme = '美食与地标（下午自由）';
+    day4Theme = '镰仓半日游';
+    day5Theme = '睡到自然醒+返程';
+  }
+  
+  const days = [
+    { num:'DAY 1', theme:'抵达东京 · 浅草初体验', slots:[
+      {t:'14:00',n:'抵达成田机场',d:'Skyliner 快线至上野 (36min)',img:'1575291786633-0c218afc4f2c'},
+      {t:'16:30',n:'浅草寺 · 雷门',d:'仲见世通逛小吃和手信',img:'1609168959134-9914b77bd890'},
+      {t:'18:30',n:'晴空塔夜景',d:'350m展望台俯瞰东京全景',img:'1706064294127-d706d497dad3'},
+      {t:'20:00',n:'居酒屋晚餐',d:'浅草周边居酒屋体验深夜食堂',img:'1694370596449-eff77fd905b3'},
+    ]},
+    { num:'DAY 2', theme:'传统与潮流碰撞', slots:[
+      {t:'09:00',n:'明治神宫',d:'穿过参天古木参道，感受都市宁静',img:'1684613998803-83fe7787db15'},
+      {t:'11:30',n:'竹下通 · 原宿',d:'彩虹棉花糖、可丽饼和潮牌小店',img:'1683041134049-28843fae8c1f'},
+      {t:'14:00',n:'涩谷十字路口',d:'Scramble Square 顶楼俯瞰',img:'1671408330455-1c22b3cc7115'},
+      {t:'17:00',n:'中目黑 · 代官山',d:'蔦屋书店、文艺咖啡店',img:'1716892230094-7233225ab383'},
+    ]},
+    { num:'DAY 3', theme:day3Theme, slots:[
+      {t:'07:00',n:'筑地场外市场',d:'海鲜丼、玉子烧、鳗鱼饭早餐',img:'1672636401225-ec3d4025a4af'},
+      {t:'10:30',n:'银座漫步',d:budget?'优衣库旗舰店、百元店扫货':'三越百货、资生堂旗舰店',img:'1736252332972-bbb72dca3988'},
+      {t:'15:00',n:'东京塔',d:'经典地标，比晴空塔更有怀旧感',img:'1727193137303-2f6abca98596'},
+      {t:'18:30',n:'六本木晚餐',d:budget?'松屋牛丼套餐 ¥30':'六本木Hills 景观餐厅',img:'1668072921663-604caa194507'},
+    ]},
+    { num:'DAY 4', theme:day4Theme, slots:[
+      {t:'08:00',n:'新宿→镰仓',d:'小田急浪漫特快约1h',img:'1680636948266-ca30581f5f73'},
+      {t:'10:00',n:'镰仓大佛 · 长谷寺',d:'13米露天大佛，长谷寺远眺海岸',img:'1598177183224-b3cec6da6b04'},
+      {t:'12:30',n:'江之电 · 镰仓高校前',d:'灌篮高手经典打卡点',img:'1665042470634-b11125f45fe0'},
+      {t:'15:00',n:'小町通り',d:'镰仓特色小吃，抹茶冰淇淋',img:'1617650555983-eaf0230972c2'},
+    ]},
+    { num:'DAY 5', theme:day5Theme, slots:[
+      {t:'09:00',n:'新宿御苑',d:'东京最美城市庭园',img:'1631569911578-07b574ecf84b'},
+      {t:'11:30',n:'新宿购物',d:budget?'堂吉诃德扫货免税':'伊势丹百货限定零食',img:'1671408330431-b3c3dd99f56c'},
+      {t:'14:00',n:'前往机场',d:'预留充足时间 + 机场免税店',img:'1553619948-505cc1cdc320'},
+    ]},
+  ];
+  return days.map(day => `
+    <div class="day-section">
+      <div class="day-header"><span class="day-num">${day.num}</span><span class="day-theme">${day.theme}</span></div>
+      <div class="day-body">
+        ${day.slots.map(s => `
+          <div class="time-slot">
+            <div class="time-label">${s.t}</div>
+            <div class="slot-info"><div class="slot-title">${s.n}</div><div class="slot-desc">${s.d}</div></div>
+            <div class="slot-img" style="background-image:url('${U(s.img,260,188)}')"></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderV2Days(detail, budget) {
+  const days = [
+    { num:'DAY 1', theme:'抵达东京 · 浅草初体验', slots:[
+      {t:'14:00',n:'抵达成田机场',d:'Skyliner 快线至上野 (36min)',img:'1575291786633-0e75b108b9f5'},
+      {t:'16:30',n:'浅草寺 · 雷门',d:'仲见世通逛小吃和手信',img:'1609168959134-9914b77bd890'},
+      {t:'18:30',n:'晴空塔夜景',d:'350m展望台俯瞰东京全景',img:'1706064294127-d706d497dad3'},
+      {t:'20:00',n:'居酒屋晚餐',d:'浅草周边居酒屋体验深夜食堂',img:'1694370596449-eff77fd905b3'},
+    ]},
+    { num:'DAY 2', theme:'传统与潮流碰撞', slots:[
+      {t:'09:00',n:'明治神宫',d:'穿过参天古木参道，感受都市宁静',img:'1684613998803-83fe7787db15'},
+      {t:'11:30',n:'竹下通 · 原宿',d:'彩虹棉花糖、可丽饼和潮牌小店',img:'1683041134049-28843fae8c1f'},
+      {t:'14:00',n:'涩谷十字路口',d:'Scramble Square 顶楼俯瞰',img:'1671408330455-1c22b3cc7115'},
+      {t:'17:00',n:'中目黑 · 代官山',d:'蔦屋书店、文艺咖啡店',img:'1716892230094-7233225ab383'},
+    ]},
+    { num:'DAY 3', theme:'美食与城市地标', slots:[
+      {t:'07:00',n:'筑地场外市场',d:'海鲜丼、玉子烧、鳗鱼饭早餐',img:'1672636401225-ec3d4025a4af'},
+      {t:'10:30',n:'银座漫步',d:budget?'优衣库旗舰店、百元店扫货':'三越百货、资生堂旗舰店',img:'1736252332972-bbb72dca3988'},
+      {t:'15:00',n:'东京塔',d:'经典地标，比晴空塔更有怀旧感',img:'1727193137303-2f6abca98596'},
+      {t:'18:30',n:'六本木晚餐',d:budget?'松屋牛丼套餐 ¥30':'六本木Hills 景观餐厅',img:'1668072921663-604caa194507'},
+    ]},
+    { num:'DAY 4', theme:'镰仓一日游', slots:[
+      {t:'08:00',n:'新宿→镰仓',d:'小田急浪漫特快约1h',img:'1680636948266-ca30581f5f73'},
+      {t:'10:00',n:'镰仓大佛 · 长谷寺',d:'13米露天大佛，长谷寺远眺海岸',img:'1598177183224-b3cec6da6b04'},
+      {t:'12:30',n:'江之电 · 镰仓高校前',d:'灌篮高手经典打卡点',img:'1665042470634-b11125f45fe0'},
+      {t:'15:00',n:'小町通り',d:'镰仓特色小吃，抹茶冰淇淋',img:'1617650555983-1b3c3dd99f56c'},
+    ]},
+    { num:'DAY 5', theme:'轻松收尾 · 满载而归', slots:[
+      {t:'09:00',n:'新宿御苑',d:'东京最美城市庭园',img:'1631569911578-07b574ecf84b'},
+      {t:'11:30',n:'新宿购物',d:budget?'堂吉诃德扫货免税':'伊势丹百货限定零食',img:'1671408330431-b3c3dd99f56c'},
+      {t:'14:00',n:'前往机场',d:'预留充足时间 + 机场免税店',img:'1553619948-505cc1cdc320'},
+    ]},
+  ];
+  return days.map(day => `
+    <div class="day-section">
+      <div class="day-header"><span class="day-num">${day.num}</span><span class="day-theme">${day.theme}</span></div>
+      <div class="day-body">
+        ${day.slots.map(s => `
+          <div class="time-slot">
+            <div class="time-label">${s.t}</div>
+            <div class="slot-info"><div class="slot-title">${s.n}</div><div class="slot-desc">${s.d}</div></div>
+            <div class="slot-img" style="background-image:url('${U(s.img,260,188)}')"></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ---- V3 最终版 ----
+function renderV3(choices) {
+  const isBudget = choices.focus?.includes('性价比');
+  // 第三轮选择：酒店和机票调整
+  const hotelUpgrade = choices.hotel === '升级';
+  const hotelDowngrade = choices.hotel === '降级';
+  const flightDirect = choices.flight === '直飞';
+  const flightBudget = choices.flight === '特价';
+  const mapId = 'map-v3';
+
+  let budgetTotal = isBudget ? 7820 : 17600;
+  if (hotelUpgrade || flightDirect) budgetTotal = Math.round(budgetTotal * 1.25);
+  if (hotelDowngrade || flightBudget) budgetTotal = Math.round(budgetTotal * 0.8);
+
+  const bk = isBudget ? {
+    flight: flightBudget ? 1800 : (flightDirect ? 4200 : 2800),
+    hotel: hotelDowngrade ? 1000 : (hotelUpgrade ? 2800 : 1520),
+    transport: 600,
+    food: 1500,
+    ticket: 400,
+    shopping: 1000,
+  } : {
+    flight: flightBudget ? 3200 : (flightDirect ? 6800 : 4500),
+    hotel: hotelDowngrade ? 2400 : (hotelUpgrade ? 6800 : 3400),
+    transport: 1200,
+    food: 4000,
+    ticket: 1500,
+    shopping: 3000,
+  };
+  const total = Object.values(bk).reduce((a,b) => a+b, 0);
+
+  return `
+    <div class="version-tag">✅ V3 · 最终版行程</div>
+    <div class="itinerary-card">
+      <div class="itinerary-card-header">
+        <span class="badge" style="background:var(--color-indigo-1);color:#fff;">最终版</span>
+        <span class="title">东京 5 日定制行程</span>
+      </div>
+
+      <div class="route-overview">
+        <div style="font-size:26px;font-weight:500;color:var(--color-darkgray);">🗺️ 路线概览</div>
+        <div class="route-tag-row">
+          <span class="route-tag">📍 成田机场</span>
+          <span class="route-tag">→ 浅草/上野</span>
+          <span class="route-tag">→ 涩谷/原宿</span>
+          <span class="route-tag">→ 筑地/银座</span>
+          <span class="route-tag">→ 镰仓</span>
+          <span class="route-tag">→ 新宿</span>
+          <span class="route-tag">→ 成田机场</span>
+        </div>
+      </div>
+
+      <div class="map-section">
+        <div style="font-size:26px;font-weight:500;color:var(--color-darkgray);margin-bottom:14px;">🖊️ 路线示意图</div>
+        <div class="map-box"><canvas id="${mapId}"></canvas></div>
+      </div>
+
+      ${renderV2Days(true, isBudget && !hotelUpgrade)}
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🏨</span>住宿推荐</div>
+        ${renderFinalHotels(isBudget, hotelUpgrade, hotelDowngrade)}
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🍜</span>美食地图</div>
+        ${renderFinalFood(isBudget, hotelUpgrade)}
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">✈️</span>机票方案</div>
+        <div class="info-text">
+          ${flightDirect
+            ? '• 去程：直飞 JL089 北京-成田 08:30-13:00<br>• 返程：直飞 JL086 成田-北京 17:00-20:30<br>• 优势：省时省心，无需转机等待'
+            : flightBudget
+              ? '• 去程：中转 MU271 北京-上海-成田 06:00-15:30<br>• 返程：红眼 9C8888 成田-上海-北京 22:00-08:00+1<br>• 优势：价格最低，适合预算敏感'
+              : '• 去程：直飞 CA181 北京-成田 12:00-16:30<br>• 返程：直飞 CA182 成田-北京 18:00-21:30<br>• 优势：时间合理，性价比高'}
+        </div>
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🚃</span>交通攻略</div>
+        <div class="info-text">
+          ${isBudget && !hotelUpgrade
+            ? '• 机场↔市区：Skyliner 单程 ¥2470<br>• 市内：Tokyo Subway 72h Ticket ¥1500<br>• 镰仓：小田急周游券 ¥1640（含往返+江之电）<br>• Tips：下载「乗換案内」App，实时查最优路线'
+            : '• 机场↔市区：利木津巴士直达酒店 ¥3200<br>• 市内：Suica 卡充值随刷（约 ¥300/天）<br>• 镰仓：包车半日 ¥1500 + 江之电体验<br>• Tips：Google Maps 日本版导航最准确'}
+        </div>
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">💰</span>预算明细</div>
+        <table class="budget-table">
+          <tr><td>✈️ 往返机票</td><td>¥${bk.flight.toLocaleString()}</td></tr>
+          <tr><td>🏨 住宿 (4晚)</td><td>¥${bk.hotel.toLocaleString()}</td></tr>
+          <tr><td>🚃 市内交通</td><td>¥${bk.transport.toLocaleString()}</td></tr>
+          <tr><td>🍜 餐饮</td><td>¥${bk.food.toLocaleString()}</td></tr>
+          <tr><td>🎫 门票/体验</td><td>¥${bk.ticket.toLocaleString()}</td></tr>
+          <tr><td>🛍️ 购物/备用</td><td>¥${bk.shopping.toLocaleString()}</td></tr>
+          <tr><td><b>合计（约）</b></td><td><b>¥${total.toLocaleString()}</b></td></tr>
+        </table>
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">📌</span>出行贴士</div>
+        <div class="info-text">
+          • 签证：需提前办理日本个人旅游签证，材料准备约5个工作日<br>
+          • 网络：建议租 WiFi 蛋（¥10/天）或买 eSIM 流量卡<br>
+          • 现金：日本部分小店只收现金，建议带 ¥50,000 日元<br>
+          • 退税：消费满 ¥5,000 可免税，记得带护照<br>
+          • 天气：查好出行期间天气，备一把折叠伞<br>
+          • 礼仪：电车内请勿打电话，扶梯靠左站立<br>
+          • 必备APP：Google Maps、乗換案内、Tabelog、PayPay
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderFinalHotels(budget, upgrade, downgrade) {
+  if (downgrade) {
+    return `
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1596394519091-807c5f2b3e5e',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">东京新宿胶囊旅馆</div><div class="info-item-desc">独立胶囊空间，公共浴室干净，步行至新宿站8分钟</div><div class="info-item-price">¥180/晚</div></div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1629140727571-9b5c6f6267b4',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">备选：上野青年旅舍</div><div class="info-item-desc"> dormitory床位，社交氛围好，上野公园步行5分钟</div><div class="info-item-price">¥120/晚</div></div>
+      </div>`;
+  }
+  if (upgrade) {
+    return `
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1542314831-391a3c8f7c0a',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">东京帝国酒店</div><div class="info-item-desc">百年传奇酒店，银座心脏地带，米其林餐厅+SPA</div><div class="info-item-price">¥2,800/晚</div></div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1675409145919-277c0fc39051a',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">备选：安缦东京</div><div class="info-item-desc">东京塔景观，日式禅意设计，顶级服务体验</div><div class="info-item-price">¥4,500/晚</div></div>
+      </div>`;
+  }
+  if (budget) {
+    return `
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1758805768368-0e75b108b9f5',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">东横INN 新宿歌舞伎町</div><div class="info-item-desc">干净整洁，24h前台，楼下便利店</div><div class="info-item-price">¥380/晚</div></div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1629140727571-9b5c6f6267b4',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">备选：APA酒店 上野站前</div><div class="info-item-desc">上野公园步行3分钟，大浴场免费</div><div class="info-item-price">¥350/晚</div></div>
+      </div>`;
+  }
+  return `
+    <div class="info-item">
+      <div class="info-item-img" style="background-image:url('${U('1569664370706-e26397378b09',200,150)}')"></div>
+      <div class="info-item-body"><div class="info-item-name">新宿格拉斯丽酒店</div><div class="info-item-desc">哥斯拉同款，新宿站步行5min</div><div class="info-item-price">¥850/晚</div></div>
+    </div>
+    <div class="info-item">
+      <div class="info-item-img" style="background-image:url('${U('1675409145919-277c0fc39051a',200,150)}')"></div>
+      <div class="info-item-body"><div class="info-item-name">备选：MUJI HOTEL 银座</div><div class="info-item-desc">无印良品美学，银座核心地段</div><div class="info-item-price">¥1,200/晚</div></div>
+    </div>`;
+}
+
+function renderFinalFood(budget, up) {
+  const items = budget && !up ? [
+    {n:'矶丸水产',d:'24h营业烤海鲜',p:'¥80-150/人',img:'1694370596449-eff77fd905b3'},
+    {n:'一兰拉面 涩谷店',d:'浓郁豚骨汤头',p:'¥60/人',img:'1711633648896-b4e82f6aea59'},
+    {n:'松屋/吉野家',d:'经济实惠牛丼',p:'¥25-40/人',img:'1723962807917-ffab0600929c'},
+  ] : [
+    {n:'鮨 さいとう',d:'米其林三星寿司',p:'¥2000+/人',img:'1694370596449-eff77fd905b3'},
+    {n:'蟹道乐 银座本店',d:'帝王蟹全席',p:'¥800-1200/人',img:'1711633648896-b4e82f6aea59'},
+    {n:'烧肉 TORAJI',d:'和牛烧肉名店',p:'¥500/人',img:'1668072921663-604caa194507'},
+  ];
+  return items.map(i => `
+    <div class="info-item">
+      <div class="info-item-img" style="background-image:url('${U(i.img,200,150)}')"></div>
+      <div class="info-item-body"><div class="info-item-name">${i.n}</div><div class="info-item-desc">${i.d}</div><div class="info-item-price">${i.p}</div></div>
+    </div>
+  `).join('');
+}
+
+// ===================================================================
+// 交互引擎
+// ===================================================================
+const state = { round: 0, choices: {} };
+
+// 地图坐标
+const mapPointsV1 = [
+  {x:60,y:120,label:'浅草'},{x:130,y:80,label:'上野'},{x:220,y:140,label:'涩谷'},{x:280,y:60,label:'新宿'},{x:440,y:130,label:'镰仓'}
+];
+const mapPointsV2 = [
+  {x:30,y:50,label:'成田机场'},{x:120,y:100,label:'浅草/上野'},{x:210,y:60,label:'涩谷/原宿'},{x:290,y:120,label:'筑地/银座'},{x:410,y:80,label:'镰仓'},{x:510,y:50,label:'新宿'}
+];
+const mapPointsV3 = [
+  {x:30,y:50,label:'成田机场'},{x:110,y:110,label:'浅草/上野'},{x:195,y:55,label:'涩谷/原宿'},{x:275,y:120,label:'筑地/银座'},{x:380,y:75,label:'镰仓'},{x:470,y:45,label:'新宿'},{x:560,y:110,label:'成田机场'}
+];
+
+// 选择器点击事件（支持多选）
+document.addEventListener('click', e => {
+  const opt = e.target.closest('.selector-option');
+  if (!opt || opt.classList.contains('is-disabled')) return;
+  const group = opt.dataset.group;
+  const multiSelect = opt.dataset.multi === 'true';
+  if (multiSelect) {
+    opt.classList.toggle('is-active');
+  } else {
+    const grid = opt.closest('.selector-grid');
+    grid.querySelectorAll(`.selector-option[data-group="${group}"]`).forEach(o => o.classList.remove('is-active'));
+    opt.classList.add('is-active');
+  }
+  const wrap = opt.closest('.selector-wrap');
+  const btn = wrap.querySelector('.confirm-btn');
+  const anyActive = wrap.querySelector('.selector-option.is-active');
+  if (btn) { btn.disabled = !anyActive; btn.textContent = anyActive ? '确认，生成下一版行程 →' : '请先选择'; }
+});
+
+// 确认按钮
+function onConfirm(round) {
+  const wrap = document.getElementById(`sel-${round}`);
+  const actives = wrap.querySelectorAll('.selector-option.is-active');
+  const values = {};
+  actives.forEach(a => {
+    const g = a.dataset.group;
+    if (!values[g]) values[g] = [];
+    values[g].push(a.dataset.value);
+  });
+
+  Object.entries(values).forEach(([k, v]) => { state.choices[k] = v.join('、'); });
+
+  wrap.querySelectorAll('.selector-option').forEach(o => { o.classList.add('is-disabled'); o.style.cursor='default'; });
+  const btn = wrap.querySelector('.confirm-btn');
+  btn.disabled = true; btn.textContent = '已确认 ✓';
+  btn.style.background = 'var(--color-bg)'; btn.style.color = 'var(--color-midgray)';
+
+  const summary = Object.entries(values).map(([k,v]) => v.join('、')).join('；');
+  setTimeout(() => {
+    addBubble(summary);
+    state.round++;
+    setTimeout(() => nextRound(), 400);
+  }, 300);
+}
+
+function nextRound(fromRound) {
+  if (state.round === 1) showRound2();
+  else if (state.round === 2) showAdjustedV2();
+  else if (state.round === 3) showRound3();
+  else if (state.round === 4) showFinal();
+}
+
+// ---------- Round 1 ----------
+function showRound1Selector() {
+  return `
+    <div class="selector-wrap" id="sel-1">
+      <div class="selector-title">在生成细化版之前，我想再确认几件事：</div>
+
+      <div class="selector-group">
+        <div class="selector-group-label">📅 出发时间定了吗？</div>
+        <div class="selector-grid">
+          <div class="selector-option" data-group="time" data-value="已定" data-multi="false">已定时间</div>
+          <div class="selector-option" data-group="time" data-value="灵活" data-multi="false">还没定，灵活</div>
+        </div>
+      </div>
+
+      <div class="selector-group">
+        <div class="selector-group-label">📖 你喜欢哪种行程规划？</div>
+        <div class="selector-grid">
+          <div class="selector-option" data-group="type" data-value="简单概要" data-multi="false"><span>简单概要版</span><span class="opt-desc">路线+要点即可</span></div>
+          <div class="selector-option" data-group="type" data-value="详细完整" data-multi="false"><span>详细完整版</span><span class="opt-desc">精确到小时+费用</span></div>
+        </div>
+      </div>
+
+      <div class="selector-group">
+        <div class="selector-group-label">🎯 你更关注什么？（可多选）</div>
+        <div class="selector-grid">
+          <div class="selector-option" data-group="focus" data-value="性价比" data-multi="true"><span>💰 性价比</span><span class="opt-desc">花最少钱玩最多</span></div>
+          <div class="selector-option" data-group="focus" data-value="极致体验" data-multi="true"><span>⭐ 极致体验</span><span class="opt-desc">住好吃好不将就</span></div>
+          <div class="selector-option" data-group="focus" data-value="深度文化" data-multi="true"><span>🏯 深度文化</span><span class="opt-desc">寺庙博物馆茶道</span></div>
+          <div class="selector-option" data-group="focus" data-value="打卡拍照" data-multi="true"><span>📸 打卡拍照</span><span class="opt-desc">出片率最重要</span></div>
+        </div>
+      </div>
+
+      <button class="confirm-btn" disabled onclick="onConfirm(1)">请先选择</button>
+    </div>
+  `;
+}
+
+// ---------- Round 2 ----------
+function showRound2() {
+  const tid = showTyping();
+  setTimeout(() => {
+    removeTyping(tid);
+    const bid = 'ai-v2';
+    append(`<div class="ai-block" id="${bid}">
+      <div class="article">
+        <p>好的！根据你的偏好，我更新了行程——</p>
+      </div>
+      ${renderV2(state.choices)}
+      <div class="article" style="margin-top:30px;">
+        <p>这是第二版细化行程，包含了每日时间线、住宿、美食和预算。接下来想跟你确认一些细节：</p>
+      </div>
+      <div class="selector-wrap" id="sel-2">
+        <div class="selector-title">关于这版行程：</div>
+        <div class="selector-group">
+          <div class="selector-group-label">🏞️ 景点安排满意吗？</div>
+          <div class="selector-grid">
+            <div class="selector-option" data-group="adjust" data-value="满意" data-multi="false"><span>挺好的👍</span><span class="opt-desc">不需要大改</span></div>
+            <div class="selector-option" data-group="adjust" data-value="换景点" data-multi="false"><span>换几个景点</span><span class="opt-desc">有些不太感兴趣</span></div>
+            <div class="selector-option" data-group="adjust" data-value="加紧凑" data-multi="false"><span>再紧凑一些</span><span class="opt-desc">多塞几个地方</span></div>
+            <div class="selector-option" data-group="adjust" data-value="更轻松" data-multi="false"><span>再轻松一些</span><span class="opt-desc">不要赶太紧</span></div>
+          </div>
+        </div>
+        <div class="selector-group">
+          <div class="selector-group-label">💰 预算范围合适吗？</div>
+          <div class="selector-grid three-col">
+            <div class="selector-option" data-group="budgetFeel" data-value="合适" data-multi="false">刚刚好</div>
+            <div class="selector-option" data-group="budgetFeel" data-value="偏高" data-multi="false">有点高</div>
+            <div class="selector-option" data-group="budgetFeel" data-value="可以更高" data-multi="false">可以更高</div>
+          </div>
+        </div>
+        <button class="confirm-btn" disabled onclick="onConfirm(2)">请先选择</button>
+      </div>
+    </div>`);
+    setTimeout(() => show(document.getElementById(bid)), 50);
+    scrollBottom();
+    drawMap('map-v2', mapPointsV2, '#6666ff');
+  }, 2000);
+}
+
+// ---------- 调整后的 V2 行程 ----------
+function showAdjustedV2() {
+  const tid = showTyping();
+  setTimeout(() => {
+    removeTyping(tid);
+    const bid = 'ai-v2-adjusted';
+    const adjustDesc = getAdjustDescription();
+    append(`<div class="ai-block" id="${bid}">
+      <div class="article">
+        <p>已根据你的反馈调整行程！${adjustDesc}</p>
+      </div>
+      ${renderV2Adjusted(state.choices)}
+    </div>`);
+    setTimeout(() => show(document.getElementById(bid)), 50);
+    scrollBottom();
+    drawMap('map-v2-adj', mapPointsV2, '#6666ff');
+    
+    // 显示第三轮选择
+    setTimeout(() => showRound3(), 1500);
+  }, 2000);
+}
+
+function getAdjustDescription() {
+  const adjust = state.choices.adjust;
+  const budgetFeel = state.choices.budgetFeel;
+  let desc = '';
+  if (adjust === '换景点') desc += '已替换部分景点，推荐更符合你兴趣的目的地。';
+  else if (adjust === '加紧凑') desc += '行程已加密，充分利用每一天的时间。';
+  else if (adjust === '更轻松') desc += '已减少每日景点数量，留出更多自由时间。';
+  else desc += '景点安排保持现状。';
+  
+  if (budgetFeel === '偏高') desc += '预算已优化，推荐更经济的住宿和餐饮选择。';
+  else if (budgetFeel === '可以更高') desc += '预算已提升，推荐更高品质的酒店和餐厅。';
+  else desc += '预算范围保持不变。';
+  return desc;
+}
+
+// ---------- Round 3 ----------
+function showRound3() {
+  const bid = 'ai-r3';
+  append(`<div class="ai-block" id="${bid}">
+    <div class="article">
+      <p>现在关于酒店和机票的确认：</p>
+    </div>
+    <div class="selector-wrap" id="sel-3">
+      <div class="selector-group">
+        <div class="selector-group-label">🏨 酒店需要调整吗？</div>
+        <div class="selector-grid three-col">
+          <div class="selector-option" data-group="hotel" data-value="满意" data-multi="false"><span>满意</span><span class="opt-desc">就住这个</span></div>
+          <div class="selector-option" data-group="hotel" data-value="升级" data-multi="false"><span>升级</span><span class="opt-desc">住更好</span></div>
+          <div class="selector-option" data-group="hotel" data-value="降级" data-multi="false"><span>降级</span><span class="opt-desc">更省钱</span></div>
+        </div>
+      </div>
+      <div class="selector-group">
+        <div class="selector-group-label">✈️ 机票需要调整吗？</div>
+        <div class="selector-grid three-col">
+          <div class="selector-option" data-group="flight" data-value="满意" data-multi="false"><span>满意</span><span class="opt-desc">按这个来</span></div>
+          <div class="selector-option" data-group="flight" data-value="直飞" data-multi="false"><span>直飞</span><span class="opt-desc">不转机</span></div>
+          <div class="selector-option" data-group="flight" data-value="特价" data-multi="false"><span>特价</span><span class="opt-desc">最便宜</span></div>
+        </div>
+      </div>
+      <button class="confirm-btn" disabled onclick="onConfirm(3)">请先选择</button>
+    </div>
+  </div>`);
+  setTimeout(() => show(document.getElementById(bid)), 50);
+  scrollBottom();
+}
+
+// ---------- Final ----------
+function showFinal() {
+  const tid = showTyping();
+  setTimeout(() => {
+    removeTyping(tid);
+    const bid = 'ai-final';
+    append(`<div class="ai-block" id="${bid}">
+      <div class="article">
+        <p>好的！3轮沟通完毕，这是根据你所有偏好定制的<b>最终版行程规划</b>——包含完整路线、每日安排、住宿推荐、美食地图、交通攻略、预算明细和出行贴士。</p>
+      </div>
+      ${renderV3(state.choices)}
+      <div class="like-share">
+        <p class="disclaimer">回答由AI生成，内容仅供参考</p>
+        <div class="action-row">
+          <div class="btn-group">
+            <button class="action-btn"><img src="https://gw.alicdn.com/imgextra/i2/O1CN01SFT3RD2A6aeMxtJOt_!!6000000008154-2-tps-64-64.png" width="32" height="32"></button>
+            <button class="action-btn"><img src="https://gw.alicdn.com/imgextra/i1/O1CN01EUrI4o1bOtvujdMCF_!!6000000003456-2-tps-64-64.png" width="32" height="32"></button>
+            <button class="action-btn"><img src="https://gw.alicdn.com/imgextra/i1/O1CN01f5oE2k1DYTQtfTRCH_!!6000000000228-2-tps-64-64.png" width="32" height="32"></button>
+          </div>
+          <button class="think-btn"><img src="https://gw.alicdn.com/imgextra/i2/O1CN01Xqbrpd1jOus8H3PtA_!!6000000004539-2-tps-84-84.png" width="42" height="42"><span>已深度思考</span></button>
+        </div>
+      </div>
+      <div class="followup-wrap">
+        <p class="guide">你还可以问：</p>
+        <div class="followup-list">
+          <a class="followup-item" href="javascript:void(0)"><span>帮我预订 Day2 的米其林餐厅</span><img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" width="20" height="20"></a>
+          <a class="followup-item" href="javascript:void(0)"><span>下雨天行程怎么调整？</span><img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" width="20" height="20"></a>
+          <a class="followup-item" href="javascript:void(0)"><span>帮我生成可分享的行程图片</span><img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" width="20" height="20"></a>
+        </div>
+      </div>
+      <button class="restart-btn" onclick="restart()">↻ 重新体验 Demo</button>
+    </div>`);
+    setTimeout(() => show(document.getElementById(bid)), 50);
+    scrollBottom();
+    drawMap('map-v3', mapPointsV3, '#6666ff');
+  }, 2500);
+}
+
+// ===================================================================
+// 启动
+// ===================================================================
+function restart() {
+  state.round = 0; state.choices = {};
+  chat.innerHTML = '';
+  start();
+}
+
+function start() {
+  setTimeout(() => {
+    addBubble('帮我规划一个东京5日游');
+    setTimeout(() => {
+      const tid = showTyping();
+      setTimeout(() => {
+        removeTyping(tid);
+        const bid = 'ai-v1';
+        append(`<div class="ai-block" id="${bid}">
+          <div class="article">
+            <h2>东京 5 日游 · 初版行程</h2>
+            <p>收到！我先快速为你生成一个行程骨架。后面通过几轮对话，帮你把它打磨成专属行程。</p>
+          </div>
+          ${renderV1()}
+          <div class="article" style="margin-top:30px;">
+            <p>这是初版概要，接下来我有几个问题想确认，方便为你生成更精准的细化版：</p>
+          </div>
+          ${showRound1Selector()}
+        </div>`);
+        setTimeout(() => show(document.getElementById(bid)), 50);
+        scrollBottom();
+        drawMap('map-v1', mapPointsV1, '#6666ff');
+      }, 1800);
+    }, 500);
+  }, 400);
+}
+
+start();
+</script>
+</body>
+</html>
