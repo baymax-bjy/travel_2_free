@@ -617,6 +617,15 @@ function renderV2(choices) {
           <tr><td>✈️ 往返机票</td><td>${isBudget ? '¥2,800' : '¥4,500'}</td></tr>
           <tr><td>🏨 住宿 (4晚)</td><td>${isBudget ? '¥1,520' : '¥3,400'}</td></tr>
           <tr><td>🚃 市内交通</td><td>${isBudget ? '¥600' : '¥1,200'}</td></tr>
+          <tr><td>🍜 餐饮</td><td>${isBudget ? '¥1,500' : '¥4,000'}</td></tr>
+          <tr><td>🎫 门票/体验</td><td>${isBudget ? '¥400' : '¥1,500'}</td></tr>
+          <tr><td>🛍️ 购物/备用</td><td>${isBudget ? '¥1,000' : '¥3,000'}</td></tr>
+          <tr><td><b>合计（约）</b></td><td><b>${isBudget ? '¥7,820' : '¥17,600'}</b></td></tr>
+        </table>
+      </div>
+    </div>
+  `;
+}
 
 // ---- V2 调整后行程 ----
 function renderV2Adjusted(choices) {
