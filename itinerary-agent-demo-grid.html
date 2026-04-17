@@ -462,16 +462,18 @@ function renderV1() {
         <div class="day-header"><span class="day-num">DAY 1</span><span class="day-theme">抵达 · 浅草寺 · 晴空塔</span></div>
         <div class="day-body">
           <div class="info-text" style="margin-bottom:16px;">下午抵达东京，先逛浅草寺仲见世通，傍晚登晴空塔看夜景</div>
-          <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;">
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1609168959134-9914b77bd890',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">浅草寺</div>
-              <div style="font-size:22px;color:var(--color-midgray);">雷门 · 仲见世通</div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1609168959134-9914b77bd890',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">浅草寺</div>
+              <div class="slot-desc">雷门 · 仲见世通</div>
             </div>
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1706064294127-d706d497dad3',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">晴空塔</div>
-              <div style="font-size:22px;color:var(--color-midgray);">350m展望台</div>
+          </div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1706064294127-d706d497dad3',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">晴空塔</div>
+              <div class="slot-desc">350m展望台</div>
             </div>
           </div>
         </div>
@@ -482,21 +484,25 @@ function renderV1() {
         <div class="day-header"><span class="day-num">DAY 2</span><span class="day-theme">明治神宫 · 原宿 · 涩谷</span></div>
         <div class="day-body">
           <div class="info-text" style="margin-bottom:16px;">清晨明治神宫，竹下通潮流打卡，涩谷十字路口</div>
-          <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;">
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1684613998803-83fe7787db15',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">明治神宫</div>
-              <div style="font-size:22px;color:var(--color-midgray);">都市中的宁静</div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1684613998803-83fe7787db15',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">明治神宫</div>
+              <div class="slot-desc">都市中的宁静</div>
             </div>
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1683041134049-28843fae8c1f',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">竹下通</div>
-              <div style="font-size:22px;color:var(--color-midgray);">潮流文化圣地</div>
+          </div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1683041134049-28843fae8c1f',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">竹下通</div>
+              <div class="slot-desc">潮流文化圣地</div>
             </div>
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1671408330455-1c22b3cc7115',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">涩谷十字路口</div>
-              <div style="font-size:22px;color:var(--color-midgray);">全球最繁忙路口</div>
+          </div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1671408330455-1c22b3cc7115',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">涩谷十字路口</div>
+              <div class="slot-desc">全球最繁忙路口</div>
             </div>
           </div>
         </div>
@@ -507,21 +513,25 @@ function renderV1() {
         <div class="day-header"><span class="day-num">DAY 3</span><span class="day-theme">筑地市场 · 银座 · 东京塔</span></div>
         <div class="day-body">
           <div class="info-text" style="margin-bottom:16px;">清早筑地吃海鲜，银座购物，夜观东京塔</div>
-          <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;">
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1672636401225-ec3d4025a4af',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">筑地市场</div>
-              <div style="font-size:22px;color:var(--color-midgray);">海鲜丼早餐</div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1672636401225-ec3d4025a4af',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">筑地市场</div>
+              <div class="slot-desc">海鲜丼早餐</div>
             </div>
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1736252332972-bbb72dca3988',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">银座</div>
-              <div style="font-size:22px;color:var(--color-midgray);">高端购物街</div>
+          </div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1736252332972-bbb72dca3988',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">银座</div>
+              <div class="slot-desc">高端购物街</div>
             </div>
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1727193137303-2f6abca98596',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">东京塔</div>
-              <div style="font-size:22px;color:var(--color-midgray);">经典地标夜景</div>
+          </div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1727193137303-2f6abca98596',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">东京塔</div>
+              <div class="slot-desc">经典地标夜景</div>
             </div>
           </div>
         </div>
@@ -532,21 +542,25 @@ function renderV1() {
         <div class="day-header"><span class="day-num">DAY 4</span><span class="day-theme">镰仓一日游</span></div>
         <div class="day-body">
           <div class="info-text" style="margin-bottom:16px;">镰仓大佛、江之电、灌篮高手打卡地、湘南海岸</div>
-          <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;">
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1598177183224-b3cec6da6b04',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">镰仓大佛</div>
-              <div style="font-size:22px;color:var(--color-midgray);">13米露天佛像</div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1598177183224-b3cec6da6b04',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">镰仓大佛</div>
+              <div class="slot-desc">13米露天佛像</div>
             </div>
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1665042470634-b11125f45fe0',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">镰仓高校前</div>
-              <div style="font-size:22px;color:var(--color-midgray);">灌篮高手打卡</div>
+          </div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1665042470634-b11125f45fe0',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">镰仓高校前</div>
+              <div class="slot-desc">灌篮高手打卡</div>
             </div>
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1617650555983-eaf0230972c2',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">小町通</div>
-              <div style="font-size:22px;color:var(--color-midgray);">特色小吃街</div>
+          </div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1617650555983-eaf0230972c2',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">小町通</div>
+              <div class="slot-desc">特色小吃街</div>
             </div>
           </div>
         </div>
@@ -557,16 +571,18 @@ function renderV1() {
         <div class="day-header"><span class="day-num">DAY 5</span><span class="day-theme">新宿购物 · 返程</span></div>
         <div class="day-body">
           <div class="info-text" style="margin-bottom:16px;">新宿御苑散步，伊势丹买伴手礼，下午机场返程</div>
-          <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;">
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1631569911578-07b574ecf84b',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">新宿御苑</div>
-              <div style="font-size:22px;color:var(--color-midgray);">城市绿洲</div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1631569911578-07b574ecf84b',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">新宿御苑</div>
+              <div class="slot-desc">城市绿洲</div>
             </div>
-            <div style="flex-shrink:0;width:200px;">
-              <div style="width:200px;height:150px;border-radius:12px;background-image:url('${U('1671408330431-b3c3dd99f56c',400,300)}');background-size:cover;background-position:center;"></div>
-              <div style="font-size:24px;color:var(--color-darkgray);margin-top:8px;font-weight:500;">伊势丹</div>
-              <div style="font-size:22px;color:var(--color-midgray);">伴手礼采购</div>
+          </div>
+          <div class="time-slot" style="border-bottom:none;padding:8px 0;">
+            <div class="slot-img" style="background-image:url('${U('1671408330431-b3c3dd99f56c',260,188)}');width:200px;height:150px;"></div>
+            <div class="slot-info">
+              <div class="slot-title">伊势丹</div>
+              <div class="slot-desc">伴手礼采购</div>
             </div>
           </div>
         </div>
