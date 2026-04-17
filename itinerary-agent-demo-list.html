@@ -617,6 +617,213 @@ function renderV2(choices) {
           <tr><td>✈️ 往返机票</td><td>${isBudget ? '¥2,800' : '¥4,500'}</td></tr>
           <tr><td>🏨 住宿 (4晚)</td><td>${isBudget ? '¥1,520' : '¥3,400'}</td></tr>
           <tr><td>🚃 市内交通</td><td>${isBudget ? '¥600' : '¥1,200'}</td></tr>
+
+// ---- V2 调整后行程 ----
+function renderV2Adjusted(choices) {
+  const isDetailed = choices.type?.includes('详细');
+  const isBudget = choices.focus?.includes('性价比');
+  const budgetFeel = choices.budgetFeel;
+  const adjust = choices.adjust;
+  const mapId = 'map-v2-adj';
+  
+  // 根据第二轮选择调整
+  const isHigherBudget = budgetFeel === '可以更高';
+  const isLowerBudget = budgetFeel === '偏高';
+  
+  let hotelName, hotelPrice, hotelDesc, hotelImg;
+  if (isBudget) {
+    if (isLowerBudget) {
+      hotelName = '新宿华盛顿酒店';
+      hotelPrice = '¥320/晚';
+      hotelDesc = '老牌商务酒店，房间紧凑但五脏俱全';
+      hotelImg = '1629140727571-9b5c6f6267b4';
+    } else {
+      hotelName = '东横INN 新宿歌舞伎町';
+      hotelPrice = '¥380/晚';
+      hotelDesc = '干净整洁，位置绝佳，24h便利店楼下';
+      hotelImg = '1758805768368-0e75b108b9f5';
+    }
+  } else {
+    if (isHigherBudget) {
+      hotelName = '东京君悦酒店';
+      hotelPrice = '¥1,800/晚';
+      hotelDesc = '六本木核心，东京塔景观，五星服务';
+      hotelImg = '1542314831-391a3c8f7c0a';
+    } else {
+      hotelName = '新宿格拉斯丽酒店';
+      hotelPrice = '¥850/晚';
+      hotelDesc = '哥斯拉楼顶同款，新宿站步行5分钟';
+      hotelImg = '1569664370706-e26397378b09';
+    }
+  }
+
+  // 根据景点调整生成不同的行程描述
+  let dayAdjustText = '';
+  if (adjust === '换景点') dayAdjustText = '已根据你的兴趣替换了部分景点';
+  else if (adjust === '加紧凑') dayAdjustText = '行程已加密，每天安排更充实';
+  else if (adjust === '更轻松') dayAdjustText = '已减少每日景点，留出自由时间';
+
+  return `
+    <div class="version-tag" style="background:linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);color:#2E7D32;">📝 V2.5 · 调整后行程</div>
+    <div class="itinerary-card">
+      <div class="itinerary-card-header">
+        <span class="badge" style="background:#2E7D32;color:#fff;">已调整</span>
+        <span class="title">东京 5 日${isBudget ? (isLowerBudget ? '经济' : '高性价比') : (isHigherBudget ? '奢华' : '品质')}之旅</span>
+      </div>
+      <div class="route-overview">
+        <div style="font-size:26px;font-weight:500;color:var(--color-darkgray);">🗺️ 路线概览 ${dayAdjustText ? `<span style="font-size:22px;color:#2E7D32;margin-left:10px;">${dayAdjustText}</span>` : ''}</div>
+        <div class="route-tag-row">
+          <span class="route-tag">📍 成田机场</span>
+          <span class="route-tag">→ 浅草/上野</span>
+          <span class="route-tag">→ 涩谷/原宿</span>
+          <span class="route-tag">→ 筑地/银座</span>
+          <span class="route-tag">→ 镰仓</span>
+          <span class="route-tag">→ 新宿</span>
+        </div>
+      </div>
+      <div class="map-section">
+        <div style="font-size:26px;font-weight:500;color:var(--color-darkgray);margin-bottom:14px;">🖊️ 路线示意图</div>
+        <div class="map-box"><canvas id="${mapId}"></canvas></div>
+      </div>
+
+      ${renderV2DaysAdjusted(isDetailed, isBudget, adjust)}
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🏨</span>住宿推荐 ${budgetFeel ? `<span style="font-size:22px;color:#6666ff;margin-left:10px;">(${budgetFeel === '偏高' ? '已降级' : budgetFeel === '可以更高' ? '已升级' : '保持不变'})</span>` : ''}</div>
+        <div class="info-item">
+          <div class="info-item-img" style="background-image:url('${U(hotelImg,200,150)}')"></div>
+          <div class="info-item-body">
+            <div class="info-item-name">${hotelName}</div>
+            <div class="info-item-desc">${hotelDesc}</div>
+            <div class="info-item-price">${hotelPrice}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🍜</span>美食推荐</div>
+        ${renderAdjustedFood(isBudget, isLowerBudget, isHigherBudget)}
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">🚃</span>交通方案</div>
+        <div class="info-text">${isBudget || isLowerBudget
+          ? '推荐购买「Tokyo Subway 72h Ticket」¥1500，覆盖东京Metro全线 + 都营地铁，5天内最划算。往返成田机场用 Skyliner（¥2470）。'
+          : '推荐购买 Suica 卡随刷随走，灵活自由。往返机场选利木津巴士直达酒店（¥3200），省去拖行李换乘。Day4 镰仓用 JR 通票。'}</div>
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">💰</span>预算估算</div>
+        <table class="budget-table">
+          <tr><td>✈️ 往返机票</td><td>${isBudget ? (isLowerBudget ? '¥2,400' : '¥2,800') : (isHigherBudget ? '¥6,500' : '¥4,500')}</td></tr>
+          <tr><td>🏨 住宿 (4晚)</td><td>${isBudget ? (isLowerBudget ? '¥1,280' : '¥1,520') : (isHigherBudget ? '¥7,200' : '¥3,400')}</td></tr>
+          <tr><td>🚃 市内交通</td><td>${isBudget ? '¥600' : '¥1,200'}</td></tr>
+          <tr><td>🍜 餐饮</td><td>${isBudget ? (isLowerBudget ? '¥1,200' : '¥1,500') : (isHigherBudget ? '¥6,000' : '¥4,000')}</td></tr>
+          <tr><td>🎫 门票/体验</td><td>${isBudget ? (isLowerBudget ? '¥350' : '¥400') : (isHigherBudget ? '¥3,000' : '¥1,500')}</td></tr>
+          <tr><td>🛍️ 购物/备用</td><td>${isBudget ? (isLowerBudget ? '¥800' : '¥1,000') : (isHigherBudget ? '¥5,000' : '¥3,000')}</td></tr>
+          <tr><td><b>合计（约）</b></td><td><b>${isBudget ? (isLowerBudget ? '¥6,630' : '¥7,820') : (isHigherBudget ? '¥26,700' : '¥17,600')}</b></td></tr>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function renderAdjustedFood(isBudget, isLowerBudget, isHigherBudget) {
+  if (isBudget && isLowerBudget) {
+    return `
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1723962807917-ffab0600929c',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">松屋/吉野家</div><div class="info-item-desc">经济实惠牛丼套餐</div><div class="info-item-price">¥25-40/人</div></div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1711633648896-b4e82f6aea59',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">一兰拉面</div><div class="info-item-desc">浓郁豚骨汤头</div><div class="info-item-price">¥60/人</div></div>
+      </div>`;
+  }
+  if (!isBudget && isHigherBudget) {
+    return `
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1694370596449-eff77fd905b3',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">鮨 さいとう</div><div class="info-item-desc">米其林三星寿司，需预约</div><div class="info-item-price">¥3,000+/人</div></div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1668072921663-604caa194507',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">叙叙苑 新宿店</div><div class="info-item-desc">高级和牛烧肉，夜景一流</div><div class="info-item-price">¥800/人</div></div>
+      </div>`;
+  }
+  return `
+    <div class="info-item">
+      <div class="info-item-img" style="background-image:url('${U('1694370596449-eff77fd905b3',200,150)}')"></div>
+      <div class="info-item-body"><div class="info-item-name">${isBudget ? '矶丸水产 新宿店' : '鮨 さいとう（寿司斋藤）'}</div><div class="info-item-desc">${isBudget ? '24h营业，烤海鲜拼盘性价比超高' : '米其林三星，需提前3个月预约'}</div><div class="info-item-price">${isBudget ? '¥80-150/人' : '¥2000+/人'}</div></div>
+    </div>
+    <div class="info-item">
+      <div class="info-item-img" style="background-image:url('${U('1711633648896-b4e82f6aea59',200,150)}')"></div>
+      <div class="info-item-body"><div class="info-item-name">${isBudget ? '一兰拉面 涩谷店' : '蟹道乐 银座本店'}</div><div class="info-item-desc">${isBudget ? '一人一位隔间，浓郁豚骨汤头' : '帝王蟹全席，季节限定'}</div><div class="info-item-price">${isBudget ? '¥60/人' : '¥800-1200/人'}</div></div>
+    </div>`;
+}
+
+function renderV2DaysAdjusted(detail, budget, adjust) {
+  // 根据调整类型微调行程描述
+  let day3Theme = '美食与城市地标';
+  let day4Theme = '镰仓一日游';
+  let day5Theme = '轻松收尾 · 满载而归';
+  
+  if (adjust === '加紧凑') {
+    day3Theme = '美食+购物+地标打卡';
+    day4Theme = '镰仓深度游+江之岛';
+    day5Theme = '最后冲刺+返程';
+  } else if (adjust === '更轻松') {
+    day3Theme = '美食与地标（下午自由）';
+    day4Theme = '镰仓半日游';
+    day5Theme = '睡到自然醒+返程';
+  }
+  
+  const days = [
+    { num:'DAY 1', theme:'抵达东京 · 浅草初体验', slots:[
+      {t:'14:00',n:'抵达成田机场',d:'Skyliner 快线至上野 (36min)',img:'1575291786633-0c218afc4f2c'},
+      {t:'16:30',n:'浅草寺 · 雷门',d:'仲见世通逛小吃和手信',img:'1609168959134-9914b77bd890'},
+      {t:'18:30',n:'晴空塔夜景',d:'350m展望台俯瞰东京全景',img:'1706064294127-d706d497dad3'},
+      {t:'20:00',n:'居酒屋晚餐',d:'浅草周边居酒屋体验深夜食堂',img:'1694370596449-eff77fd905b3'},
+    ]},
+    { num:'DAY 2', theme:'传统与潮流碰撞', slots:[
+      {t:'09:00',n:'明治神宫',d:'穿过参天古木参道，感受都市宁静',img:'1684613998803-83fe7787db15'},
+      {t:'11:30',n:'竹下通 · 原宿',d:'彩虹棉花糖、可丽饼和潮牌小店',img:'1683041134049-28843fae8c1f'},
+      {t:'14:00',n:'涩谷十字路口',d:'Scramble Square 顶楼俯瞰',img:'1671408330455-1c22b3cc7115'},
+      {t:'17:00',n:'中目黑 · 代官山',d:'蔦屋书店、文艺咖啡店',img:'1716892230094-7233225ab383'},
+    ]},
+    { num:'DAY 3', theme:day3Theme, slots:[
+      {t:'07:00',n:'筑地场外市场',d:'海鲜丼、玉子烧、鳗鱼饭早餐',img:'1672636401225-ec3d4025a4af'},
+      {t:'10:30',n:'银座漫步',d:budget?'优衣库旗舰店、百元店扫货':'三越百货、资生堂旗舰店',img:'1736252332972-bbb72dca3988'},
+      {t:'15:00',n:'东京塔',d:'经典地标，比晴空塔更有怀旧感',img:'1727193137303-2f6abca98596'},
+      {t:'18:30',n:'六本木晚餐',d:budget?'松屋牛丼套餐 ¥30':'六本木Hills 景观餐厅',img:'1668072921663-604caa194507'},
+    ]},
+    { num:'DAY 4', theme:day4Theme, slots:[
+      {t:'08:00',n:'新宿→镰仓',d:'小田急浪漫特快约1h',img:'1680636948266-ca30581f5f73'},
+      {t:'10:00',n:'镰仓大佛 · 长谷寺',d:'13米露天大佛，长谷寺远眺海岸',img:'1598177183224-b3cec6da6b04'},
+      {t:'12:30',n:'江之电 · 镰仓高校前',d:'灌篮高手经典打卡点',img:'1665042470634-b11125f45fe0'},
+      {t:'15:00',n:'小町通り',d:'镰仓特色小吃，抹茶冰淇淋',img:'1617650555983-eaf0230972c2'},
+    ]},
+    { num:'DAY 5', theme:day5Theme, slots:[
+      {t:'09:00',n:'新宿御苑',d:'东京最美城市庭园',img:'1631569911578-07b574ecf84b'},
+      {t:'11:30',n:'新宿购物',d:budget?'堂吉诃德扫货免税':'伊势丹百货限定零食',img:'1671408330431-b3c3dd99f56c'},
+      {t:'14:00',n:'前往机场',d:'预留充足时间 + 机场免税店',img:'1553619948-505cc1cdc320'},
+    ]},
+  ];
+  return days.map(day => `
+    <div class="day-section">
+      <div class="day-header"><span class="day-num">${day.num}</span><span class="day-theme">${day.theme}</span></div>
+      <div class="day-body">
+        ${day.slots.map(s => `
+          <div class="time-slot">
+            <div class="time-label">${s.t}</div>
+            <div class="slot-info"><div class="slot-title">${s.n}</div><div class="slot-desc">${s.d}</div></div>
+            <div class="slot-img" style="background-image:url('${U(s.img,260,188)}')"></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
           <tr><td>🍜 餐饮</td><td>${isBudget ? '¥1,500' : '¥4,000'}</td></tr>
           <tr><td>🎫 门票/体验</td><td>${isBudget ? '¥400' : '¥1,500'}</td></tr>
           <tr><td>🛍️ 购物/备用</td><td>${isBudget ? '¥1,000' : '¥3,000'}</td></tr>
@@ -919,14 +1126,15 @@ function onConfirm(round) {
   setTimeout(() => {
     addBubble(summary);
     state.round++;
-    setTimeout(() => nextRound(), 400);
+    setTimeout(() => nextRound(round), 400);
   }, 300);
 }
 
-function nextRound() {
+function nextRound(fromRound) {
   if (state.round === 1) showRound2();
-  else if (state.round === 2) showRound3();
-  else if (state.round === 3) showFinal();
+  else if (state.round === 2) showAdjustedV2();
+  else if (state.round === 3) showRound3();
+  else if (state.round === 4) showFinal();
 }
 
 // ---------- Round 1 ----------
@@ -1017,39 +1225,72 @@ function showRound2() {
   }, 2000);
 }
 
-// ---------- Round 3 ----------
-function showRound3() {
+// ---------- 调整后的 V2 行程 ----------
+function showAdjustedV2() {
   const tid = showTyping();
   setTimeout(() => {
     removeTyping(tid);
-    const bid = 'ai-r3';
+    const bid = 'ai-v2-adjusted';
+    const adjustDesc = getAdjustDescription();
     append(`<div class="ai-block" id="${bid}">
       <div class="article">
-        <p>收到！我会根据你的反馈做最后调整。现在关于酒店和机票的确认：</p>
+        <p>已根据你的反馈调整行程！${adjustDesc}</p>
       </div>
-      <div class="selector-wrap" id="sel-3">
-        <div class="selector-group">
-          <div class="selector-group-label">🏨 酒店需要调整吗？</div>
-          <div class="selector-list">
-            ${optCard(1, 'hotel', '满意', '满意，就住这个', '当前推荐的酒店挺合适', false)}
-            ${optCard(2, 'hotel', '升级', '想住更好一点', '升级到更高星级的酒店', false)}
-            ${optCard(3, 'hotel', '降级', '可以住便宜点', '换成经济型酒店省预算', false)}
-          </div>
-        </div>
-        <div class="selector-group">
-          <div class="selector-group-label">✈️ 机票需要调整吗？</div>
-          <div class="selector-list">
-            ${optCard(1, 'flight', '满意', '满意，按这个来', '当前航班时间/价格合适', false)}
-            ${optCard(2, 'flight', '直飞', '要直飞不转机', '直飞优先，贵一点也行', false)}
-            ${optCard(3, 'flight', '特价', '找特价机票', '接受红眼/中转，要最便宜', false)}
-          </div>
-        </div>
-        <button class="confirm-btn" disabled onclick="onConfirm(3)">请先选择</button>
-      </div>
+      ${renderV2Adjusted(state.choices)}
     </div>`);
     setTimeout(() => show(document.getElementById(bid)), 50);
     scrollBottom();
-  }, 1500);
+    drawMap('map-v2-adj', mapPointsV2, '#6666ff');
+    
+    // 显示第三轮选择
+    setTimeout(() => showRound3(), 1500);
+  }, 2000);
+}
+
+function getAdjustDescription() {
+  const adjust = state.choices.adjust;
+  const budgetFeel = state.choices.budgetFeel;
+  let desc = '';
+  if (adjust === '换景点') desc += '已替换部分景点，推荐更符合你兴趣的目的地。';
+  else if (adjust === '加紧凑') desc += '行程已加密，充分利用每一天的时间。';
+  else if (adjust === '更轻松') desc += '已减少每日景点数量，留出更多自由时间。';
+  else desc += '景点安排保持现状。';
+  
+  if (budgetFeel === '偏高') desc += '预算已优化，推荐更经济的住宿和餐饮选择。';
+  else if (budgetFeel === '可以更高') desc += '预算已提升，推荐更高品质的酒店和餐厅。';
+  else desc += '预算范围保持不变。';
+  return desc;
+}
+
+// ---------- Round 3 ----------
+function showRound3() {
+  const bid = 'ai-r3';
+  append(`<div class="ai-block" id="${bid}">
+    <div class="article">
+      <p>现在关于酒店和机票的确认：</p>
+    </div>
+    <div class="selector-wrap" id="sel-3">
+      <div class="selector-group">
+        <div class="selector-group-label">🏨 酒店需要调整吗？</div>
+        <div class="selector-list">
+          ${optCard(1, 'hotel', '满意', '满意，就住这个', '当前推荐的酒店挺合适', false)}
+          ${optCard(2, 'hotel', '升级', '想住更好一点', '升级到更高星级的酒店', false)}
+          ${optCard(3, 'hotel', '降级', '可以住便宜点', '换成经济型酒店省预算', false)}
+        </div>
+      </div>
+      <div class="selector-group">
+        <div class="selector-group-label">✈️ 机票需要调整吗？</div>
+        <div class="selector-list">
+          ${optCard(1, 'flight', '满意', '满意，按这个来', '当前航班时间/价格合适', false)}
+          ${optCard(2, 'flight', '直飞', '要直飞不转机', '直飞优先，贵一点也行', false)}
+          ${optCard(3, 'flight', '特价', '找特价机票', '接受红眼/中转，要最便宜', false)}
+        </div>
+      </div>
+      <button class="confirm-btn" disabled onclick="onConfirm(3)">请先选择</button>
+    </div>
+  </div>`);
+  setTimeout(() => show(document.getElementById(bid)), 50);
+  scrollBottom();
 }
 
 // ---------- Final ----------
