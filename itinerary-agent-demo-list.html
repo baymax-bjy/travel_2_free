@@ -678,29 +678,32 @@ function renderV2Days(detail, budget) {
 // ---- V3 最终版 ----
 function renderV3(choices) {
   const isBudget = choices.focus?.includes('性价比');
-  const budgetUp = choices.budget === 'up';
-  const budgetDown = choices.budget === 'down';
+  // 第三轮选择：酒店和机票调整
+  const hotelUpgrade = choices.hotel === '升级';
+  const hotelDowngrade = choices.hotel === '降级';
+  const flightDirect = choices.flight === '直飞';
+  const flightBudget = choices.flight === '特价';
   const mapId = 'map-v3';
 
   // 根据第2轮、第3轮选择微调
   let budgetTotal = isBudget ? 7820 : 17600;
-  if (budgetUp) budgetTotal = Math.round(budgetTotal * 1.3);
-  if (budgetDown) budgetTotal = Math.round(budgetTotal * 0.75);
+  if (hotelUpgrade || flightDirect) budgetTotal = Math.round(budgetTotal * 1.25);
+  if (hotelDowngrade || flightBudget) budgetTotal = Math.round(budgetTotal * 0.8);
 
   const bk = isBudget ? {
-    flight: budgetDown ? 2200 : 2800,
-    hotel: budgetDown ? 1200 : 1520,
-    transport: budgetDown ? 500 : 600,
-    food: budgetDown ? 1200 : 1500,
-    ticket: budgetDown ? 300 : 400,
-    shopping: budgetDown ? 800 : 1000,
+    flight: flightBudget ? 1800 : (flightDirect ? 4200 : 2800),
+    hotel: hotelDowngrade ? 1000 : (hotelUpgrade ? 2800 : 1520),
+    transport: 600,
+    food: 1500,
+    ticket: 400,
+    shopping: 1000,
   } : {
-    flight: budgetUp ? 6000 : 4500,
-    hotel: budgetUp ? 5000 : 3400,
-    transport: budgetUp ? 1800 : 1200,
-    food: budgetUp ? 6000 : 4000,
-    ticket: budgetUp ? 2500 : 1500,
-    shopping: budgetUp ? 4000 : 3000,
+    flight: flightBudget ? 3200 : (flightDirect ? 6800 : 4500),
+    hotel: hotelDowngrade ? 2400 : (hotelUpgrade ? 6800 : 3400),
+    transport: 1200,
+    food: 4000,
+    ticket: 1500,
+    shopping: 3000,
   };
   const total = Object.values(bk).reduce((a,b) => a+b, 0);
 
@@ -730,22 +733,33 @@ function renderV3(choices) {
         <div class="map-box"><canvas id="${mapId}"></canvas></div>
       </div>
 
-      ${renderV2Days(true, isBudget && !budgetUp)}
+      ${renderV2Days(true, isBudget && !hotelUpgrade)}
 
       <div class="info-module">
         <div class="info-module-title"><span class="icon">🏨</span>住宿推荐</div>
-        ${renderFinalHotels(isBudget, budgetUp)}
+        ${renderFinalHotels(isBudget, hotelUpgrade, hotelDowngrade)}
       </div>
 
       <div class="info-module">
         <div class="info-module-title"><span class="icon">🍜</span>美食地图</div>
-        ${renderFinalFood(isBudget, budgetUp)}
+        ${renderFinalFood(isBudget, hotelUpgrade)}
+      </div>
+
+      <div class="info-module">
+        <div class="info-module-title"><span class="icon">✈️</span>机票方案</div>
+        <div class="info-text">
+          ${flightDirect
+            ? '• 去程：直飞 JL089 北京-成田 08:30-13:00<br>• 返程：直飞 JL086 成田-北京 17:00-20:30<br>• 优势：省时省心，无需转机等待'
+            : flightBudget
+              ? '• 去程：中转 MU271 北京-上海-成田 06:00-15:30<br>• 返程：红眼 9C8888 成田-上海-北京 22:00-08:00+1<br>• 优势：价格最低，适合预算敏感'
+              : '• 去程：直飞 CA181 北京-成田 12:00-16:30<br>• 返程：直飞 CA182 成田-北京 18:00-21:30<br>• 优势：时间合理，性价比高'}
+        </div>
       </div>
 
       <div class="info-module">
         <div class="info-module-title"><span class="icon">🚃</span>交通攻略</div>
         <div class="info-text">
-          ${isBudget && !budgetUp
+          ${isBudget && !hotelUpgrade
             ? '• 机场↔市区：Skyliner 单程 ¥2470<br>• 市内：Tokyo Subway 72h Ticket ¥1500<br>• 镰仓：小田急周游券 ¥1640（含往返+江之电）<br>• Tips：下载「乗換案内」App，实时查最优路线'
             : '• 机场↔市区：利木津巴士直达酒店 ¥3200<br>• 市内：Suica 卡充值随刷（约 ¥300/天）<br>• 镰仓：包车半日 ¥1500 + 江之电体验<br>• Tips：Google Maps 日本版导航最准确'}
         </div>
@@ -780,8 +794,30 @@ function renderV3(choices) {
   `;
 }
 
-function renderFinalHotels(budget, up) {
-  if (budget && !up) {
+function renderFinalHotels(budget, upgrade, downgrade) {
+  if (downgrade) {
+    return `
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1596394519091-807c5f2b3e5e',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">东京新宿胶囊旅馆</div><div class="info-item-desc">独立胶囊空间，公共浴室干净，步行至新宿站8分钟</div><div class="info-item-price">¥180/晚</div></div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1629140727571-9b5c6f6267b4',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">备选：上野青年旅舍</div><div class="info-item-desc"> dormitory床位，社交氛围好，上野公园步行5分钟</div><div class="info-item-price">¥120/晚</div></div>
+      </div>`;
+  }
+  if (upgrade) {
+    return `
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1542314831-391a3c8f7c0a',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">东京帝国酒店</div><div class="info-item-desc">百年传奇酒店，银座心脏地带，米其林餐厅+SPA</div><div class="info-item-price">¥2,800/晚</div></div>
+      </div>
+      <div class="info-item">
+        <div class="info-item-img" style="background-image:url('${U('1675409145919-277c0fc39051a',200,150)}')"></div>
+        <div class="info-item-body"><div class="info-item-name">备选：安缦东京</div><div class="info-item-desc">东京塔景观，日式禅意设计，顶级服务体验</div><div class="info-item-price">¥4,500/晚</div></div>
+      </div>`;
+  }
+  if (budget) {
     return `
       <div class="info-item">
         <div class="info-item-img" style="background-image:url('${U('1758805768368-0e75b108b9f5',200,150)}')"></div>
@@ -983,24 +1019,29 @@ function showRound2() {
 
 // ---------- Round 3 ----------
 function showRound3() {
-  const isBudget = state.choices.focus?.includes('性价比');
-  const base = isBudget ? '¥7,820' : '¥17,600';
   const tid = showTyping();
   setTimeout(() => {
     removeTyping(tid);
     const bid = 'ai-r3';
     append(`<div class="ai-block" id="${bid}">
       <div class="article">
-        <p>收到！我会根据你的反馈做最后调整。现在关于预算的最后一个确认：</p>
-        <p>目前粗估预算大约 <b style="color:var(--color-indigo-1);">${base}/人</b>，你觉得：</p>
+        <p>收到！我会根据你的反馈做最后调整。现在关于酒店和机票的确认：</p>
       </div>
       <div class="selector-wrap" id="sel-3">
         <div class="selector-group">
-          <div class="selector-group-label">💰 预算方向</div>
+          <div class="selector-group-label">🏨 酒店需要调整吗？</div>
           <div class="selector-list">
-            ${optCard(1, 'budget', 'keep', '维持现状', '当前预算刚好合适', false)}
-            ${optCard(2, 'budget', 'up', '可以提高', '愿意多花一些，体验升级', false)}
-            ${optCard(3, 'budget', 'down', '尽量压低', '能省则省，够用就好', false)}
+            ${optCard(1, 'hotel', '满意', '满意，就住这个', '当前推荐的酒店挺合适', false)}
+            ${optCard(2, 'hotel', '升级', '想住更好一点', '升级到更高星级的酒店', false)}
+            ${optCard(3, 'hotel', '降级', '可以住便宜点', '换成经济型酒店省预算', false)}
+          </div>
+        </div>
+        <div class="selector-group">
+          <div class="selector-group-label">✈️ 机票需要调整吗？</div>
+          <div class="selector-list">
+            ${optCard(1, 'flight', '满意', '满意，按这个来', '当前航班时间/价格合适', false)}
+            ${optCard(2, 'flight', '直飞', '要直飞不转机', '直飞优先，贵一点也行', false)}
+            ${optCard(3, 'flight', '特价', '找特价机票', '接受红眼/中转，要最便宜', false)}
           </div>
         </div>
         <button class="confirm-btn" disabled onclick="onConfirm(3)">请先选择</button>
