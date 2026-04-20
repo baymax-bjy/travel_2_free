@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=750, user-scalable=no">
+  <title>飞猪千问 - 湖南→上海情侣行程规划</title>
+  <style>
+    @font-face {
+      font-family: 'Fliggy Sans 102';
+      src: url('https://g.alicdn.com/trip/common-assets/1.1.9/fonts/FliggySans102-Md.ttf') format('truetype');
+      font-weight: 500;
+      font-display: swap;
+    }
+    
+    :root {
+      --color-darkgray: #0f131a;
+      --color-midgray: #5c5f66;
+      --color-lightgray: #919499;
+      --color-indigo-1: #6666ff;
+      --color-indigo-4: #EBEBFF;
+      --color-warning-1: #ff3333;
+      --color-pay-1: #ff5533;
+      --color-white: #ffffff;
+      --color-label: #F7F8FA;
+      --color-bg: #f2f3f5;
+      --radius-xl: 36px;
+      --radius-l: 24px;
+      --radius-m: 12px;
+      --radius-s: 6px;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'PingFang SC', 'SimHei', sans-serif;
+      background: var(--color-label);
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* 文本组件样式 */
+    .article-content {
+      width: 690px;
+      background: transparent;
+    }
+    
+    .article-content h1 {
+      font-size: 42px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: var(--color-darkgray);
+      margin: 0 0 24px 0;
+    }
+    
+    .article-content h2 {
+      font-size: 36px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: var(--color-darkgray);
+      margin: 42px 0 18px 0;
+    }
+    
+    .article-content h3 {
+      font-size: 30px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: var(--color-darkgray);
+      margin: 24px 0 12px 0;
+    }
+    
+    .article-content p {
+      font-size: 30px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--color-darkgray);
+      margin: 24px 0 0 0;
+    }
+    
+    .article-content ul {
+      margin: 18px 0 0 0;
+      padding-left: 36px;
+    }
+    
+    .article-content li {
+      font-size: 30px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--color-darkgray);
+      margin-bottom: 12px;
+    }
+    
+    .article-content strong {
+      font-weight: 500;
+    }
+    
+    .article-content .highlight {
+      color: var(--color-indigo-1);
+      font-weight: 500;
+    }
+    
+    .article-content .warning {
+      color: var(--color-warning-1);
+    }
+    
+    .article-content .success {
+      color: #0BC968;
+    }
+    
+    /* 按钮组件样式 */
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      height: 80px;
+      padding: 20px 32px;
+      border-radius: var(--radius-l);
+      font-size: 26px;
+      font-weight: 500;
+      line-height: 1.4;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: var(--color-indigo-1);
+      color: var(--color-white);
+    }
+    
+    .btn-secondary {
+      background: var(--color-indigo-4);
+      color: var(--color-indigo-1);
+    }
+    
+    .btn-tertiary {
+      background: var(--color-bg);
+      color: var(--color-darkgray);
+    }
+    
+    /* 表格组件样式 */
+    .table-wrapper {
+      width: 690px;
+      margin-top: 24px;
+      border-radius: var(--radius-xl);
+      background: var(--color-white);
+      overflow: hidden;
+      overflow-x: auto;
+    }
+    
+    .table-wrapper table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .table-wrapper thead {
+      background: var(--color-bg);
+    }
+    
+    .table-wrapper th {
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--color-darkgray);
+      padding: 24px;
+      text-align: left;
+    }
+    
+    .table-wrapper td {
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--color-darkgray);
+      padding: 24px;
+      border-bottom: 1px solid var(--color-bg);
+    }
+    
+    .table-wrapper tr:last-child td {
+      border-bottom: none;
+    }
+    
+    /* 交通卡组件样式 */
+    .transport-card {
+      width: 690px;
+      background: var(--color-white);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      margin-top: 24px;
+    }
+    
+    .transport-card .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .transport-card .card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .transport-card .card-icon.train {
+      background: #0BC968;
+    }
+    
+    .transport-card .card-icon.plane {
+      background: #4DA6FF;
+    }
+    
+    .transport-card .card-title {
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--color-darkgray);
+    }
+    
+    .transport-card .card-body {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 18px;
+    }
+    
+    .transport-card .itinerary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 24px;
+      flex: 1;
+    }
+    
+    .transport-card .time-station {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .transport-card .time-station.depart {
+      align-items: flex-start;
+    }
+    
+    .transport-card .time-station.arrive {
+      align-items: flex-end;
+    }
+    
+    .transport-card .time {
+      font-family: 'Fliggy Sans 102', 'PingFang SC', 'SimHei', sans-serif;
+      font-size: 42px;
+      font-weight: bold;
+      color: var(--color-darkgray);
+    }
+    
+    .transport-card .station {
+      font-size: 22px;
+      color: var(--color-darkgray);
+      margin-top: 14px;
+    }
+    
+    .transport-card .route-line {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 0 24px;
+    }
+    
+    .transport-card .duration {
+      font-size: 22px;
+      color: #999999;
+    }
+    
+    .transport-card .arrow-line {
+      width: 100%;
+      height: 2px;
+      background: rgba(230, 231, 235, 0.8);
+      position: relative;
+    }
+    
+    .transport-card .arrow-line::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -4px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid rgba(230, 231, 235, 0.8);
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+    }
+    
+    .transport-card .price-area {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      padding-top: 24px;
+    }
+    
+    .transport-card .price {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    
+    .transport-card .currency {
+      font-family: 'Fliggy Sans 102';
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-darkgray);
+    }
+    
+    .transport-card .amount {
+      font-family: 'Fliggy Sans 102';
+      font-size: 42px;
+      color: var(--color-darkgray);
+    }
+    
+    .transport-card .book-btn {
+      width: 96px;
+      height: 60px;
+      background: var(--color-indigo-4);
+      color: var(--color-indigo-1);
+      font-size: 24px;
+      font-weight: 600;
+      border-radius: var(--radius-l);
+      border: none;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    
+    .transport-card .info-line {
+      font-size: 20px;
+      color: var(--color-lightgray);
+      margin-top: 10px;
+    }
+    
+    /* 商品卡组件样式 */
+    .info-card-wrapper {
+      width: 690px;
+      padding-top: 24px;
+    }
+    
+    .info-card {
+      background: var(--color-white);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      display: flex;
+      gap: 24px;
+    }
+    
+    .info-card .card-image {
+      width: 140px;
+      height: 210px;
+      border-radius: var(--radius-l);
+      background-size: cover;
+      background-position: center;
+      background-color: #E0E0E0;
+      flex-shrink: 0;
+    }
+    
+    .info-card .card-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+    
+    .info-card .content-main {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .info-card .title-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 42px;
+    }
+    
+    .info-card .card-title {
+      font-size: 30px;
+      font-weight: 500;
+      color: var(--color-darkgray);
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .info-card .title-tag {
+      background: var(--color-bg);
+      border-radius: var(--radius-s);
+      padding: 0 8px;
+      height: 32px;
+      font-size: 22px;
+      color: var(--color-lightgray);
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    
+    .info-card .info-line {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 24px;
+      line-height: 1.4;
+      min-height: 34px;
+    }
+    
+    .info-card .rating {
+      color: var(--color-indigo-1);
+      font-weight: 500;
+    }
+    
+    .info-card .description {
+      color: var(--color-midgray);
+      font-weight: 400;
+    }
+    
+    .info-card .content-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .info-card .price-area {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    
+    .info-card .price {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      color: var(--color-darkgray);
+    }
+    
+    .info-card .price .prefix {
+      font-size: 20px;
+      font-weight: 400;
+    }
+    
+    .info-card .price .currency {
+      font-family: 'Fliggy Sans 102';
+      font-size: 24px;
+      font-weight: 700;
+    }
+    
+    .info-card .price .amount-major {
+      font-family: 'Fliggy Sans 102';
+      font-size: 42px;
+      line-height: 0.64;
+    }
+    
+    .info-card .price .suffix {
+      font-size: 20px;
+      font-weight: 400;
+    }
+    
+    .info-card .discount-tag {
+      font-size: 20px;
+      color: var(--color-pay-1);
+      min-height: 28px;
+      line-height: 28px;
+    }
+    
+    .info-card .action-button {
+      width: 96px;
+      height: 60px;
+      background: var(--color-indigo-4);
+      color: var(--color-indigo-1);
+      font-size: 24px;
+      font-weight: 600;
+      border-radius: var(--radius-l);
+      border: none;
+      cursor: pointer;
+    }
+    
+    /* 预算概览样式 */
+    .budget-overview {
+      width: 690px;
+      background: var(--color-white);
+      border-radius: var(--radius-xl);
+      padding: 30px;
+      margin-top: 24px;
+    }
+    
+    .budget-overview .budget-title {
+      font-size: 30px;
+      font-weight: 500;
+      color: var(--color-darkgray);
+      margin-bottom: 24px;
+    }
+    
+    .budget-overview .budget-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--color-bg);
+    }
+    
+    .budget-overview .budget-item:last-child {
+      border-bottom: none;
+    }
+    
+    .budget-overview .budget-label {
+      font-size: 26px;
+      color: var(--color-midgray);
+    }
+    
+    .budget-overview .budget-value {
+      font-family: 'Fliggy Sans 102';
+      font-size: 30px;
+      color: var(--color-darkgray);
+    }
+    
+    .budget-overview .budget-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 24px;
+      margin-top: 12px;
+      border-top: 2px solid var(--color-darkgray);
+    }
+    
+    .budget-overview .budget-total-label {
+      font-size: 30px;
+      font-weight: 500;
+      color: var(--color-darkgray);
+    }
+    
+    .budget-overview .budget-total-value {
+      font-family: 'Fliggy Sans 102';
+      font-size: 42px;
+      font-weight: bold;
+      color: var(--color-indigo-1);
+    }
+    
+    /* 时间轴样式 */
+    .timeline {
+      width: 690px;
+      margin-top: 24px;
+    }
+    
+    .timeline-item {
+      display: flex;
+      gap: 18px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--color-bg);
+    }
+    
+    .timeline-item:last-child {
+      border-bottom: none;
+    }
+    
+    .timeline-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--color-indigo-1);
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+    
+    .timeline-content {
+      flex: 1;
+    }
+    
+    .timeline-time {
+      font-size: 24px;
+      color: var(--color-lightgray);
+      margin-bottom: 8px;
+    }
+    
+    .timeline-title {
+      font-size: 30px;
+      font-weight: 500;
+      color: var(--color-darkgray);
+      margin-bottom: 12px;
+    }
+    
+    .timeline-desc {
+      font-size: 26px;
+      color: var(--color-midgray);
+      line-height: 1.6;
+    }
+    
+    /* 标签样式 */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      background: var(--color-indigo-4);
+      color: var(--color-indigo-1);
+      font-size: 22px;
+      border-radius: var(--radius-s);
+      margin-right: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .tag-success {
+      background: #E8F9F0;
+      color: #0BC968;
+    }
+    
+    .tag-warning {
+      background: #FFF0ED;
+      color: var(--color-pay-1);
+    }
+    
+    /* 交互状态 */
+    .interactive-card {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .interactive-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    
+    .interactive-card:active {
+      transform: translateY(0);
+    }
+    
+    /* 展开/收起 */
+    .expandable {
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    
+    .expand-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 18px;
+      background: transparent;
+      border: none;
+      color: var(--color-indigo-1);
+      font-size: 26px;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    
+    /* Tab切换 */
+    .tab-container {
+      width: 690px;
+      margin-top: 24px;
+    }
+    
+    .tab-header {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    .tab-btn {
+      padding: 16px 30px;
+      background: var(--color-white);
+      border: 1px solid var(--color-bg);
+      border-radius: var(--radius-l);
+      font-size: 26px;
+      color: var(--color-midgray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .tab-btn.active {
+      background: var(--color-indigo-1);
+      color: var(--color-white);
+      border-color: var(--color-indigo-1);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* POI景点卡片样式 */
+    .poi-card {
+      width: 690px;
+      background: var(--color-white);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      margin-bottom: 18px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .poi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    
+    .poi-card-image {
+      width: 100%;
+      height: 300px;
+      background-size: cover;
+      background-position: center;
+      background-color: #E0E0E0;
+    }
+    
+    .poi-card-content {
+      padding: 24px;
+    }
+    
+    .poi-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .poi-card-title {
+      font-size: 32px;
+      font-weight: 500;
+      color: var(--color-darkgray);
+      line-height: 1.4;
+    }
+    
+    .poi-card-time {
+      font-size: 24px;
+      color: var(--color-lightgray);
+      background: var(--color-bg);
+      padding: 6px 16px;
+      border-radius: var(--radius-s);
+      white-space: nowrap;
+    }
+    
+    .poi-card-desc {
+      font-size: 26px;
+      color: var(--color-midgray);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    
+    .poi-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .poi-card-tag {
+      font-size: 22px;
+      color: var(--color-indigo-1);
+      background: var(--color-indigo-4);
+      padding: 6px 14px;
+      border-radius: var(--radius-s);
+    }
+    
+    .poi-card-price {
+      font-size: 24px;
+      color: var(--color-pay-1);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body style="background: var(--color-label); margin: 0; font-family: 'PingFang SC','SimHei',sans-serif;">
+  
+  <!-- ====== 导航栏组件 开始 ====== -->
+  <div class="skill-header-component" style="
+    position: fixed; top: 0; left: 0;
+    width: 750px; height: 176px;
+    z-index: 9999;
+    display: flex; flex-direction: column;
+  ">
+    <!-- 状态栏 -->
+    <div style="width: 750px; height: 88px; flex-shrink: 0;">
+      <svg width="750" height="88" viewBox="0 0 750 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_nav)">
+          <rect width="750" height="88" fill="#F7F8FA"/>
+          <g clip-path="url(#clip1_nav)">
+            <path d="M59.8576 33.616C62.2936 33.616 64.1416 34.484 65.4296 36.276C66.6616 37.984 67.3056 40.364 67.3056 43.444C67.3056 46.692 66.6336 49.324 65.3176 51.34C63.9456 53.356 62.1256 54.392 59.8296 54.392C55.9376 54.392 53.7536 52.572 53.2496 48.96H56.2176C56.6096 50.892 57.8416 51.872 59.8576 51.872C61.2296 51.872 62.3216 51.172 63.1616 49.828C63.9456 48.54 64.3656 46.916 64.3656 44.984C64.3656 44.872 64.3376 44.76 64.3376 44.62H64.2256C63.6656 45.488 62.9376 46.132 62.0976 46.58C61.2856 46.972 60.3616 47.196 59.3256 47.196C57.3656 47.196 55.7696 46.552 54.5936 45.292C53.4456 44.06 52.8856 42.464 52.8856 40.504C52.8856 38.488 53.5296 36.864 54.8736 35.576C56.2176 34.26 57.8696 33.616 59.8576 33.616ZM59.9696 36.136C58.7376 36.136 57.7296 36.528 57.0016 37.368C56.2456 38.18 55.8816 39.216 55.8816 40.504C55.8816 41.792 56.2456 42.8 57.0016 43.556C57.7016 44.34 58.6816 44.732 59.9416 44.732C61.1736 44.732 62.1816 44.34 62.9096 43.556C63.6376 42.772 64.0016 41.708 64.0016 40.42C64.0016 39.104 63.6096 38.068 62.8816 37.312C62.1256 36.528 61.1456 36.136 59.9696 36.136ZM72.2787 39.636C72.8387 39.636 73.3427 39.832 73.7627 40.252C74.1547 40.644 74.3787 41.148 74.3787 41.736C74.3787 42.296 74.1547 42.8 73.7627 43.22C73.3427 43.612 72.8387 43.808 72.2787 43.808C71.6627 43.808 71.1867 43.612 70.8227 43.22C70.4027 42.8 70.2067 42.296 70.2067 41.736C70.2067 41.148 70.4027 40.644 70.8227 40.252C71.1867 39.832 71.6627 39.636 72.2787 39.636ZM72.2787 49.884C72.8387 49.884 73.3427 50.08 73.7627 50.5C74.1547 50.892 74.3787 51.396 74.3787 51.984C74.3787 52.544 74.1547 53.048 73.7627 53.468C73.3427 53.86 72.8387 54.056 72.2787 54.056C71.6627 54.056 71.1867 53.86 70.8227 53.468C70.4027 53.048 70.2067 52.544 70.2067 51.984C70.2067 51.396 70.4027 50.892 70.8227 50.5C71.1867 50.08 71.6627 49.884 72.2787 49.884ZM86.5156 34.008H89.3156V47.224H92.3396V49.66H89.3156V54H86.4036V49.66H76.6596V46.776L86.5156 34.008ZM86.3196 37.872L79.1516 47.224H86.4036V37.872H86.3196Z" fill="#0F131A"/>
+          </g>
+          <g clip-path="url(#clip2_nav)">
+            <rect opacity="0.35" x="678.344" y="33.6719" width="42" height="20.6667" rx="4.33333" fill="#0F131A" stroke="#0F131A" stroke-width="2"/>
+            <path opacity="0.4" d="M723.344 40.0078V48.0078C724.953 47.3303 726 45.7541 726 44.0078C726 42.2615 724.953 40.6854 723.344 40.0078Z" fill="#0F131A"/>
+            <rect x="681.344" y="36.6719" width="36" height="14.6667" rx="2.66667" fill="#0F131A"/>
+            <path d="M647.586 49.4623C650.138 47.3047 653.873 47.3046 656.424 49.4623C656.553 49.5783 656.628 49.7424 656.631 49.9154C656.635 50.0883 656.566 50.2552 656.443 50.3763L652.449 54.4076C652.332 54.526 652.172 54.5921 652.005 54.5921C651.839 54.5921 651.679 54.526 651.562 54.4076L647.567 50.3763C647.444 50.2551 647.376 50.0882 647.379 49.9154C647.383 49.7424 647.458 49.5782 647.586 49.4623ZM642.255 44.0843C647.752 38.9718 656.264 38.9716 661.76 44.0843C661.884 44.2041 661.955 44.369 661.957 44.5414C661.958 44.7138 661.891 44.8799 661.769 45.0023L659.459 47.3363C659.221 47.5742 658.837 47.5789 658.593 47.347C656.788 45.7127 654.44 44.8079 652.005 44.808C649.572 44.809 647.225 45.7137 645.421 47.347C645.177 47.5788 644.793 47.5743 644.555 47.3363L642.247 45.0023C642.125 44.8801 642.056 44.7139 642.058 44.5414C642.06 44.3689 642.131 44.2041 642.255 44.0843ZM636.923 38.723C645.353 30.6444 658.652 30.6444 667.083 38.723C667.205 38.843 667.274 39.007 667.275 39.1781C667.276 39.3491 667.209 39.5137 667.088 39.6351L664.776 41.9691C664.538 42.2082 664.151 42.2106 663.91 41.9749C660.698 38.9215 656.435 37.2193 652.003 37.2191C647.571 37.2191 643.308 38.9213 640.096 41.9749C639.855 42.2109 639.468 42.2085 639.23 41.9691L636.917 39.6351C636.796 39.5136 636.729 39.3491 636.73 39.1781C636.731 39.0069 636.801 38.8429 636.923 38.723Z" fill="#0F131A"/>
+            <path d="M596.676 46.6719C597.78 46.6719 598.676 47.5673 598.676 48.6719V52.6719C598.676 53.7764 597.78 54.6719 596.676 54.6719H594.676C593.571 54.6719 592.676 53.7764 592.676 52.6719V48.6719C592.676 47.5673 593.571 46.6719 594.676 46.6719H596.676ZM606.008 42.6719C607.112 42.6719 608.008 43.5673 608.008 44.6719V52.6719C608.008 53.7764 607.112 54.6719 606.008 54.6719H604.008C602.903 54.6719 602.008 53.7764 602.008 52.6719V44.6719C602.008 43.5673 602.903 42.6719 604.008 42.6719H606.008ZM624.676 33.3359C625.78 33.3359 626.676 34.2314 626.676 35.3359V52.6689C626.676 53.7735 625.78 54.6689 624.676 54.6689H622.676C621.571 54.6689 620.676 53.7735 620.676 52.6689V35.3359C620.676 34.2314 621.571 33.3359 622.676 33.3359H624.676ZM615.344 38C616.448 38 617.344 38.8954 617.344 40V52.667C617.344 53.7714 616.448 54.667 615.344 54.667H613.344C612.239 54.667 611.344 53.7714 611.344 52.667V40C611.344 38.8954 612.239 38 613.344 38H615.344Z" fill="#0F131A"/>
+          </g>
+        </g>
+        <defs>
+          <clipPath id="clip0_nav"><rect width="750" height="88" fill="white"/></clipPath>
+          <clipPath id="clip1_nav"><rect width="108" height="34" fill="white" transform="translate(24 27)"/></clipPath>
+          <clipPath id="clip2_nav"><rect width="133.323" height="22.672" fill="white" transform="translate(592.676 32.6641)"/></clipPath>
+        </defs>
+      </svg>
+    </div>
+    <!-- 导航栏 -->
+    <nav style="
+      box-sizing: border-box;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 24px; width: 750px; height: 88px; background: #F7F8FA;
+    ">
+      <div style="display: flex; align-items: center; width: 114px;">
+        <div style="width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M38.5 10.5C39.3284 10.5 40 11.1716 40 12C40 12.8284 39.3284 13.5 38.5 13.5H9.5C8.67157 13.5 8 12.8284 8 12C8 11.1716 8.67157 10.5 9.5 10.5H38.5Z" fill="#0F131A"/>
+            <path d="M28.5 22.5C29.3284 22.5 30 23.1716 30 24C30 24.8284 29.3284 25.5 28.5 25.5H9.5C8.67157 25.5 8 24.8284 8 24C8 23.1716 8.67157 22.5 9.5 22.5H28.5Z" fill="#0F131A"/>
+            <path d="M33.5 34.5C34.3284 34.5 35 35.1716 35 36C35 36.8284 34.3284 37.5 33.5 37.5H9.5C8.67157 37.5 8 36.8284 8 36C8 35.1716 8.67157 34.5 9.5 34.5H33.5Z" fill="#0F131A"/>
+          </svg>
+        </div>
+      </div>
+      <div style="flex-grow: 1; display: flex; justify-content: center;">
+        <h1 style="margin: 0; font-weight: 500; font-size: 36px; line-height: 140%; text-align: center; color: #0F131A;">飞猪千问</h1>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: flex-end; width: 114px; gap: 18px;">
+        <div style="width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 7.5C24.8284 7.5 25.5 8.17157 25.5 9C25.5 9.82843 24.8284 10.5 24 10.5H12C10.067 10.5 8.5 12.067 8.5 14V38.1797L11.8076 34.6182C12.4698 33.9052 13.399 33.5 14.3721 33.5H36C37.933 33.5 39.5 31.933 39.5 30V23.5C39.5 22.6716 40.1716 22 41 22C41.8284 22 42.5 22.6716 42.5 23.5V30C42.5 33.5899 39.5899 36.5 36 36.5H14.3721C14.2331 36.5 14.1004 36.5583 14.0059 36.6602L9.83203 41.1543C8.28593 42.8193 5.5 41.7253 5.5 39.4531V14C5.5 10.4101 8.41015 7.5 12 7.5H24Z" fill="black"/>
+            <path d="M36.4541 3.99023C37.2825 3.99023 37.9541 4.66181 37.9541 5.49023V10.998H43.5C44.3284 10.998 45 11.6696 45 12.498C45 13.3265 44.3284 13.998 43.5 13.998H37.9541V19.4902C37.9541 20.3187 37.2825 20.9902 36.4541 20.9902C35.6257 20.9902 34.9541 20.3187 34.9541 19.4902V13.998H29.5C28.6716 13.998 28 13.3265 28 12.498C28 11.6696 28.6716 10.998 29.5 10.998H34.9541V5.49023C34.9541 4.66181 35.6257 3.99023 36.4541 3.99023Z" fill="black"/>
+          </svg>
+        </div>
+        <div style="width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.4837 19.6036C9.87449 19.0423 9.83546 18.0929 10.3967 17.4837C10.958 16.8745 11.9074 16.8355 12.5166 17.3967L24.2281 28.1883L35.9395 17.3967C36.5487 16.8355 37.4981 16.8745 38.0595 17.4837C38.6207 18.0929 38.5816 19.0423 37.9724 19.6036L25.5836 31.0188L25.4351 31.1424C24.6718 31.7215 23.5905 31.6804 22.8725 31.0188L10.4837 19.6036Z" fill="#0F131A"/>
+          </svg>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <!-- ====== 导航栏组件 结束 ====== -->
+
+  <!-- 内容区域 -->
+  <div style="
+    padding: 176px 30px 258px;
+    width: 750px; box-sizing: border-box;
+  ">
+    
+    <!-- ====== 输入气泡 开始 ====== -->
+    <div style="display: flex; justify-content: flex-end; padding: 24px 0; width: 690px;">
+      <div style="
+        max-width: 600px; padding: 30px;
+        background: linear-gradient(180deg, #E4E4FF 0%, #EDEDFF 100%);
+        border-radius: 36px;
+      ">
+        <p style="margin: 0; font-weight: 500; font-size: 30px; line-height: 140%; color: #0F131A; word-wrap: break-word; overflow-wrap: break-word;">
+          帮我规划一个湖南到上海的情侣拍照行程，预算2000元，2人，三天两晚
+        </p>
+      </div>
+    </div>
+    <!-- ====== 输入气泡 结束 ====== -->
+    
+    <!-- AI 回复内容 -->
+    <div class="article-content">
+      <h1>湖南→上海｜2000元 · 2人 · 三天两晚 · 情侣拍照行程</h1>
+      
+      <p>
+        <span class="tag tag-success">✅ 预算可控</span>
+        <span class="tag">💑 情侣出行</span>
+        <span class="tag">📷 拍照出片</span>
+      </p>
+      
+      <h2>一、预算可行性判断</h2>
+      
+      <!-- 预算概览卡片 -->
+      <div class="budget-overview interactive-card" onclick="toggleBudgetDetail()">
+        <div class="budget-title">费用框架概览</div>
+        <div class="budget-item">
+          <span class="budget-label">大交通（往返）</span>
+          <span class="budget-value">¥1,040</span>
+        </div>
+        <div class="budget-item">
+          <span class="budget-label">住宿（2晚）</span>
+          <span class="budget-value">¥300</span>
+        </div>
+        <div class="budget-item">
+          <span class="budget-label">市内交通+门票</span>
+          <span class="budget-value">¥230</span>
+        </div>
+        <div class="budget-item">
+          <span class="budget-label">餐饮（3天）</span>
+          <span class="budget-value">¥270</span>
+        </div>
+        <div class="budget-total">
+          <span class="budget-total-label">合计预算</span>
+          <span class="budget-total-value">¥1,840</span>
+        </div>
+      </div>
+      
+      <p><strong>量级判断：</strong>可以做到，但属于<span class="highlight">"精打细算型可行"</span>。最大变量是大交通，占总预算的<span class="highlight">53%</span>。</p>
+      
+      <h2>二、大交通方案</h2>
+      
+      <!-- 交通方案对比表格 -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>方案</th>
+              <th>2人往返</th>
+              <th>耗时</th>
+              <th>评价</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>🚄 高铁二等座</td>
+              <td>~¥1,912</td>
+              <td>5-6h</td>
+              <td class="warning">❌ 超预算</td>
+            </tr>
+            <tr>
+              <td>✈️ 特价机票</td>
+              <td>¥800-1,800</td>
+              <td>2h+</td>
+              <td>⚠️ 需抢</td>
+            </tr>
+            <tr style="background: #F0F7FF;">
+              <td><strong>🛏️ 火车硬卧</strong></td>
+              <td><strong>~¥1,040</strong></td>
+              <td>12-14h</td>
+              <td class="success">✅ 推荐</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <h3>✅ 最优解：夜间火车硬卧</h3>
+      
+      <!-- 推荐车次卡片 -->
+      <div class="transport-card interactive-card" onclick="selectTrain()">
+        <div class="card-header">
+          <div class="card-icon train">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4 14V6C4 4.89543 4.89543 4 6 4H14C15.1046 4 16 4.89543 16 6V14" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <path d="M2 14H18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="6" cy="17" r="1.5" fill="white"/>
+              <circle cx="14" cy="17" r="1.5" fill="white"/>
+            </svg>
+          </div>
+          <span class="card-title">火车票丨4月20日 长沙-上海</span>
+        </div>
+        <div class="card-body">
+          <div class="itinerary">
+            <div class="time-station depart">
+              <span class="time">20:00</span>
+              <span class="station">长沙站</span>
+            </div>
+            <div class="route-line">
+              <span class="duration">Z216 · 12小时</span>
+              <div class="arrow-line"></div>
+            </div>
+            <div class="time-station arrive">
+              <span class="time">08:00</span>
+              <span class="station">上海南站</span>
+            </div>
+          </div>
+          <div class="price-area">
+            <div class="price">
+              <span class="currency">¥</span>
+              <span class="amount">260</span>
+            </div>
+            <button class="book-btn">预订</button>
+          </div>
+        </div>
+        <div class="info-line">硬卧 · 夜发朝至 · 省一晚住宿</div>
+      </div>
+      
+      <p>省钱关键：<span class="highlight">放弃高铁，改坐夜间火车卧铺</span>——价格只有高铁的一半，且利用睡觉时间赶路，不浪费白天。</p>
+      
+      <h2>三、住宿性价比方案</h2>
+      
+      <p>预算锚定：<strong>150元/晚</strong>，2晚控制在300元以内。</p>
+      
+      <!-- 酒店推荐卡片 -->
+      <div class="info-card-wrapper">
+        <div class="info-card interactive-card" onclick="selectHotel()">
+          <div class="card-image" style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?w=140&h=210&fit=crop');"></div>
+          <div class="card-content">
+            <div class="content-main">
+              <div class="title-line">
+                <span class="card-title">汉庭酒店·上海四川北路店</span>
+                <span class="title-tag">连锁</span>
+              </div>
+              <div class="info-line">
+                <span class="rating">⭐ 4.8分</span>
+                <span class="description">地铁2站到外滩</span>
+              </div>
+              <div class="info-line">
+                <span class="description">虹口区·近甜爱路</span>
+              </div>
+            </div>
+            <div class="content-footer">
+              <div class="price-area">
+                <div class="price">
+                  <span class="currency">¥</span>
+                  <span class="amount-major">148</span>
+                  <span class="suffix">起/晚</span>
+                </div>
+                <div class="discount-tag">周中特惠</div>
+              </div>
+              <button class="action-button">预订</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <h2>四、三天详细行程</h2>
+      
+      <!-- Tab切换 -->
+      <div class="tab-container">
+        <div class="tab-header">
+          <button class="tab-btn active" onclick="switchTab(0)">Day 1</button>
+          <button class="tab-btn" onclick="switchTab(1)">Day 2</button>
+          <button class="tab-btn" onclick="switchTab(2)">Day 3</button>
+        </div>
+        
+        <!-- Day 1 内容 -->
+        <div class="tab-content active" id="tab-0">
+          <h3 style="margin: 0 0 24px 0;">📷 Day 1｜法租界梧桐街拍 + 外滩日落</h3>
+          
+          <!-- POI 1: 武康路 -->
+          <div class="poi-card" onclick="showPOIDetail('wukang')">
+            <div class="poi-card-image" style="background-image: url('https://images.unsplash.com/photo-1727193137303-2f6abca98596?w=690&h=300&fit=crop');"></div>
+            <div class="poi-card-content">
+              <div class="poi-card-header">
+                <span class="poi-card-title">武康路 → 安福路 → 复兴西路</span>
+                <span class="poi-card-time">10:00-12:30</span>
+              </div>
+              <div class="poi-card-desc">梧桐树影、洋房街道、武康大楼经典机位。穿浅色/法式风格衣服随手出片。</div>
+              <div class="poi-card-tags">
+                <span class="poi-card-tag">🆓 免费</span>
+                <span class="poi-card-tag">📷 法式街拍</span>
+                <span class="poi-card-tag">🌳 梧桐大道</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- POI 2: 思南公馆 -->
+          <div class="poi-card" onclick="showPOIDetail('sinan')">
+            <div class="poi-card-image" style="background-image: url('https://images.unsplash.com/photo-1772860812099-30373d1f3045?w=690&h=300&fit=crop');"></div>
+            <div class="poi-card-content">
+              <div class="poi-card-header">
+                <span class="poi-card-title">思南路 → 思南公馆</span>
+                <span class="poi-card-time">14:00-15:30</span>
+              </div>
+              <div class="poi-card-desc">整片保留的花园洋房街区，红砖墙+草坪+铁艺栏杆。比武康路人少，拍照更从容。</div>
+              <div class="poi-card-tags">
+                <span class="poi-card-tag">🆓 免费</span>
+                <span class="poi-card-tag">📷 民国风</span>
+                <span class="poi-card-tag">🏛️ 花园洋房</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- POI 3: 外滩 -->
+          <div class="poi-card" onclick="showPOIDetail('bund')">
+            <div class="poi-card-image" style="background-image: url('https://images.unsplash.com/photo-1671408330431-b3cec6da6b04?w=690&h=300&fit=crop');"></div>
+            <div class="poi-card-content">
+              <div class="poi-card-header">
+                <span class="poi-card-title">外滩全时段拍摄</span>
+                <span class="poi-card-time">17:30-20:30</span>
+              </div>
+              <div class="poi-card-desc">万国建筑群、外白渡桥、陆家嘴夜景。日落+蓝调+夜景三种风格一次拍齐。</div>
+              <div class="poi-card-tags">
+                <span class="poi-card-tag">🆓 免费</span>
+                <span class="poi-card-tag">📷 都市夜景</span>
+                <span class="poi-card-tag">🌉 外白渡桥</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Day 2 内容 -->
+        <div class="tab-content" id="tab-1">
+          <h3 style="margin: 0 0 24px 0;">📷 Day 2｜浦东高空 + 虹口文艺线</h3>
+          
+          <!-- POI 1: 陆家嘴 -->
+          <div class="poi-card" onclick="showPOIDetail('lujiazui')">
+            <div class="poi-card-image" style="background-image: url('https://images.unsplash.com/photo-1671408330455-1c22b3cc7115?w=690&h=300&fit=crop');"></div>
+            <div class="poi-card-content">
+              <div class="poi-card-header">
+                <span class="poi-card-title">陆家嘴环形天桥 + 滨江大道</span>
+                <span class="poi-card-time">09:00-10:00</span>
+              </div>
+              <div class="poi-card-desc">天桥上仰拍东方明珠+金茂大厦+上海中心三件套。清晨人少背景干净。</div>
+              <div class="poi-card-tags">
+                <span class="poi-card-tag">🆓 免费</span>
+                <span class="poi-card-tag">📷 城市天际线</span>
+                <span class="poi-card-tag">🏙️ 三件套</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- POI 2: 东方明珠 -->
+          <div class="poi-card" onclick="showPOIDetail('dongfang')">
+            <div class="poi-card-image" style="background-image: url('https://images.unsplash.com/photo-1706064294127-d706d497dad3?w=690&h=300&fit=crop');"></div>
+            <div class="poi-card-content">
+              <div class="poi-card-header">
+                <span class="poi-card-title">东方明珠·259米透明观光廊</span>
+                <span class="poi-card-time">10:30-12:00</span>
+              </div>
+              <div class="poi-card-desc">259米高空俯瞰整个上海，透明玻璃走廊上拍情侣照，脚下是城市、身后是天空。</div>
+              <div class="poi-card-tags">
+                <span class="poi-card-price">🎫 ¥65/人</span>
+                <span class="poi-card-tag">📷 高空俯瞰</span>
+                <span class="poi-card-tag">💑 情侣必拍</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- POI 3: 1933老场坊 -->
+          <div class="poi-card" onclick="showPOIDetail('1933')">
+            <div class="poi-card-image" style="background-image: url('https://images.unsplash.com/photo-1724013219407-f948c6b3819f?w=690&h=300&fit=crop');"></div>
+            <div class="poi-card-content">
+              <div class="poi-card-header">
+                <span class="poi-card-title">1933老场坊</span>
+                <span class="poi-card-time">14:00-15:30</span>
+              </div>
+              <div class="poi-card-desc">罗马巴西利卡式混凝土建筑，交错廊桥、旋转坡道、伞形柱头，光影效果极其戏剧化。</div>
+              <div class="poi-card-tags">
+                <span class="poi-card-tag">🆓 免费</span>
+                <span class="poi-card-tag">📷 工业风</span>
+                <span class="poi-card-tag">🏭 光影建筑</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- POI 4: 甜爱路 -->
+          <div class="poi-card" onclick="showPOIDetail('tianai')">
+            <div class="poi-card-image" style="background-image: url('https://images.unsplash.com/photo-1684613998803-83fe7787db15?w=690&h=300&fit=crop');"></div>
+            <div class="poi-card-content">
+              <div class="poi-card-header">
+                <span class="poi-card-title">甜爱路 → 多伦路 → 苏州河</span>
+                <span class="poi-card-time">16:00-19:00</span>
+              </div>
+              <div class="poi-card-desc">全长约500米，路侧墙壁刻满中外爱情诗。日落时段河面反射天光，逆光拍情侣剪影非常美。</div>
+              <div class="poi-card-tags">
+                <span class="poi-card-tag">🆓 免费</span>
+                <span class="poi-card-tag">📷 浪漫文艺</span>
+                <span class="poi-card-tag">💕 爱情诗墙</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Day 3 内容 -->
+        <div class="tab-content" id="tab-2">
+          <h3 style="margin: 0 0 24px 0;">📷 Day 3｜豫园古韵 + 愚园路 + M50涂鸦</h3>
+          
+          <!-- POI 1: 豫园 -->
+          <div class="poi-card" onclick="showPOIDetail('yuyuan')">
+            <div class="poi-card-image" style="background-image: url('https://images.unsplash.com/photo-1609168959134-9914b77bd890?w=690&h=300&fit=crop');"></div>
+            <div class="poi-card-content">
+              <div class="poi-card-header">
+                <span class="poi-card-title">豫园·城隍庙外围</span>
+                <span class="poi-card-time">09:00-11:00</span>
+              </div>
+              <div class="poi-card-desc">飞檐翘角建筑群、九曲桥、湖心亭。中式古建筑+红灯笼+倒影，和欧式风格形成强烈对比。</div>
+              <div class="poi-card-tags">
+                <span class="poi-card-tag">🆓 免费</span>
+                <span class="poi-card-tag">📷 中式古韵</span>
+                <span class="poi-card-tag">🏮 飞檐翘角</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- POI 2: 愚园路 -->
+          <div class="poi-card" onclick="showPOIDetail('yuyuanlu')">
+            <div class="poi-card-image" style="background-image: url('https://images.unsplash.com/photo-1680636948266-ca30581f5f73?w=690&h=300&fit=crop');"></div>
+            <div class="poi-card-content">
+              <div class="poi-card-header">
+                <span class="poi-card-title">愚园路</span>
+                <span class="poi-card-time">11:30-13:00</span>
+              </div>
+              <div class="poi-card-desc">有生活感的拍照路线，弄堂口的烟火气、旧式公寓的铁栏杆、转角的独立小店。</div>
+              <div class="poi-card-tags">
+                <span class="poi-card-tag">🆓 免费</span>
+                <span class="poi-card-tag">📷 生活感街拍</span>
+                <span class="poi-card-tag">🏘️ 弄堂风情</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- POI 3: M50创意园 -->
+          <div class="poi-card" onclick="showPOIDetail('m50')">
+            <div class="poi-card-image" style="background-image: url('https://images.unsplash.com/photo-1668072921663-604caa194507?w=690&h=300&fit=crop');"></div>
+            <div class="poi-card-content">
+              <div class="poi-card-header">
+                <span class="poi-card-title">M50创意园</span>
+                <span class="poi-card-time">14:30-16:00</span>
+              </div>
+              <div class="poi-card-desc">莫干山路上的老工厂改造艺术区，涂鸦墙是全上海最密集的街头艺术，色彩饱和度极高。</div>
+              <div class="poi-card-tags">
+                <span class="poi-card-tag">🆓 免费</span>
+                <span class="poi-card-tag">📷 潮流涂鸦</span>
+                <span class="poi-card-tag">🎨 街头艺术</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- POI 4: 返程 -->
+          <div class="poi-card" onclick="showPOIDetail('return')">
+            <div class="poi-card-image" style="background-image: url('https://images.unsplash.com/photo-1680636948266-ca30581f5f73?w=690&h=300&fit=crop');"></div>
+            <div class="poi-card-content">
+              <div class="poi-card-header">
+                <span class="poi-card-title">上海南站返程</span>
+                <span class="poi-card-time">19:30</span>
+              </div>
+              <div class="poi-card-desc">Z245 上海南→长沙，车上过夜，次日早晨抵达长沙。结束三天浪漫之旅。</div>
+              <div class="poi-card-tags">
+                <span class="poi-card-tag">🚂 Z245</span>
+                <span class="poi-card-tag">🌙 夜发朝至</span>
+                <span class="poi-card-tag">👋 返程</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <h2>五、拍照风格指南</h2>
+      
+      <div style="display: flex; flex-wrap: wrap; margin-top: 18px;">
+        <span class="tag">🌳 梧桐街拍 - 法式优雅</span>
+        <span class="tag">🏛️ 外滩 - 都市夜景</span>
+        <span class="tag">🏭 1933 - 工业冷调</span>
+        <span class="tag">💕 甜爱路 - 浪漫文艺</span>
+        <span class="tag">🏮 豫园 - 中式古韵</span>
+        <span class="tag">🎨 M50 - 潮流涂鸦</span>
+      </div>
+      
+      <p style="margin-top: 24px;">
+        <button class="btn btn-primary" onclick="bookTrip()">立即预订行程</button>
+        <button class="btn btn-secondary" onclick="shareTrip()">分享行程</button>
+        <button class="btn btn-tertiary" onclick="modifyBudget()">调整预算</button>
+      </p>
+      
+    </div>
+    
+    <!-- ====== 点赞与分享组件 开始 ====== -->
+    <div style="width: 690px; padding-top: 24px; display: flex; flex-direction: column; gap: 18px;">
+      <!-- 免责声明 -->
+      <p style="font-size: 24px; font-weight: 400; color: #919499; margin: 0; line-height: 1.4;">回答由AI生成，内容仅供参考</p>
+      <!-- 操作栏 -->
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <!-- 左侧按钮组 -->
+        <div style="display: flex; gap: 12px;">
+          <button style="width: 72px; height: 72px; display: flex; justify-content: center; align-items: center; background: #FFFFFF; border: 1px solid rgba(15,19,26,0.12); border-radius: 24px; cursor: pointer; padding: 0;" aria-label="点赞" onclick="like()">
+            <img src="https://gw.alicdn.com/imgextra/i2/O1CN01SFT3RD2A6aeMxtJOt_!!6000000008154-2-tps-64-64.png" alt="点赞" width="32" height="32">
+          </button>
+          <button style="width: 72px; height: 72px; display: flex; justify-content: center; align-items: center; background: #FFFFFF; border: 1px solid rgba(15,19,26,0.12); border-radius: 24px; cursor: pointer; padding: 0;" aria-label="点踩" onclick="dislike()">
+            <img src="https://gw.alicdn.com/imgextra/i1/O1CN01EUrI4o1bOtvujdMCF_!!6000000003456-2-tps-64-64.png" alt="点踩" width="32" height="32">
+          </button>
+          <button style="width: 72px; height: 72px; display: flex; justify-content: center; align-items: center; background: #FFFFFF; border: 1px solid rgba(15,19,26,0.12); border-radius: 24px; cursor: pointer; padding: 0;" aria-label="分享" onclick="share()">
+            <img src="https://gw.alicdn.com/imgextra/i1/O1CN01f5oE2k1DYTQtfTRCH_!!6000000000228-2-tps-64-64.png" alt="分享" width="32" height="32">
+          </button>
+        </div>
+        <!-- 右侧思考链按钮 -->
+        <button style="display: flex; align-items: center; padding: 18px; gap: 12px; height: 72px; background: #FFFFFF; border: 1px solid rgba(0,0,0,0.06); border-radius: 24px; cursor: pointer; box-sizing: border-box;" onclick="showThinking()">
+          <img src="https://gw.alicdn.com/imgextra/i2/O1CN01Xqbrpd1jOus8H3PtA_!!6000000004539-2-tps-84-84.png" alt="思考链图标" width="42" height="42">
+          <span style="font-size: 26px; font-weight: 400; color: #0F131A; line-height: 1.4;">已完成</span>
+        </button>
+      </div>
+    </div>
+    <!-- ====== 点赞与分享组件 结束 ====== -->
+    
+    <!-- ====== 追问组件 开始 ====== -->
+    <div style="width: 690px; margin-top: 42px; display: flex; flex-direction: column; gap: 18px;">
+      <p style="font-size: 30px; font-weight: 400; line-height: 1.7; color: #0F131A; margin: 0;">你还可以问：</p>
+      <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 12px;">
+        <a href="#" style="display: inline-flex; align-items: center; gap: 12px; height: 84px; padding: 24px; box-sizing: border-box; background: #FFFFFF; border: 1px solid rgba(15,19,26,0.12); border-radius: 24px; text-decoration: none; cursor: pointer;" onclick="askMore('hotel')">
+          <span style="font-size: 26px; line-height: 1.4; color: #0F131A; white-space: nowrap;">查看更多酒店选择</span>
+          <img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" alt="箭头" width="20" height="20">
+        </a>
+        <a href="#" style="display: inline-flex; align-items: center; gap: 12px; height: 84px; padding: 24px; box-sizing: border-box; background: #FFFFFF; border: 1px solid rgba(15,19,26,0.12); border-radius: 24px; text-decoration: none; cursor: pointer;" onclick="askMore('food')">
+          <span style="font-size: 26px; line-height: 1.4; color: #0F131A; white-space: nowrap;">推荐一些平价美食</span>
+          <img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" alt="箭头" width="20" height="20">
+        </a>
+        <a href="#" style="display: inline-flex; align-items: center; gap: 12px; height: 84px; padding: 24px; box-sizing: border-box; background: #FFFFFF; border: 1px solid rgba(15,19,26,0.12); border-radius: 24px; text-decoration: none; cursor: pointer;" onclick="askMore('photo')">
+          <span style="font-size: 26px; line-height: 1.4; color: #0F131A; white-space: nowrap;">每个景点的最佳拍照时间</span>
+          <img src="https://gw.alicdn.com/imgextra/i1/O1CN01epc6Kw1rj5EqPzBsT_!!6000000005666-2-tps-40-40.png" alt="箭头" width="20" height="20">
+        </a>
+      </div>
+    </div>
+    <!-- ====== 追问组件 结束 ====== -->
+    
+  </div>
+
+  <!-- ====== 底部输入区组件 开始 ====== -->
+  <div style="
+    position: fixed; bottom: 0; left: 0;
+    width: 750px; height: 258px;
+    z-index: 9998;
+  ">
+    <img
+      src="https://gw.alicdn.com/imgextra/i3/O1CN01A7yDG91iDdVASDjP3_!!6000000004379-2-tps-1500-516.png"
+      alt="底部输入区"
+      style="width: 100%; height: 100%; display: block;"
+    >
+  </div>
+  <!-- ====== 底部输入区组件 结束 ====== -->
+  
+  <script>
+    // Tab切换功能
+    function switchTab(index) {
+      // 更新按钮状态
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach((btn, i) => {
+        if (i === index) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      
+      // 更新内容显示
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach((content, i) => {
+        if (i === index) {
+          content.classList.add('active');
+        } else {
+          content.classList.remove('active');
+        }
+      });
+    }
+    
+    // 交互功能
+    function toggleBudgetDetail() {
+      alert('预算详情：\n大交通：¥1,040（火车硬卧往返）\n住宿：¥300（2晚）\n市内交通+门票：¥230\n餐饮：¥270\n合计：¥1,840（余量约¥160）');
+    }
+    
+    function selectTrain() {
+      alert('已选择：Z216 长沙→上海南 硬卧\n出发：20:00 长沙站\n到达：08:00 上海南站\n价格：¥260/人');
+    }
+    
+    function selectHotel() {
+      alert('已选择：汉庭酒店·上海四川北路店\n评分：4.8分\n价格：¥148起/晚\n位置：虹口区，地铁2站到外滩');
+    }
+    
+    function bookTrip() {
+      alert('正在为您预订行程...\n\n1. 火车票预订\n2. 酒店预订\n3. 景点门票预订');
+    }
+    
+    function shareTrip() {
+      alert('行程已复制到剪贴板，快去分享给TA吧！');
+    }
+    
+    function modifyBudget() {
+      alert('预算调整功能：\n您可以调整以下项目：\n- 交通方式（高铁/飞机/火车）\n- 住宿标准\n- 餐饮预算');
+    }
+    
+    function like() {
+      alert('感谢您的点赞！');
+    }
+    
+    function dislike() {
+      alert('我们会继续改进，感谢您的反馈！');
+    }
+    
+    function share() {
+      alert('分享功能：\n- 复制链接\n- 分享到微信\n- 生成海报');
+    }
+    
+    function showThinking() {
+      alert('思考过程：\n1. 分析预算约束（2000元/2人/3天）\n2. 计算大交通成本占比\n3. 推荐最优交通方案（夜间火车）\n4. 规划住宿区域（虹口性价比最高）\n5. 设计拍照路线（6种风格全覆盖）\n6. 验证预算可行性');
+    }
+    
+    function askMore(type) {
+      const messages = {
+        hotel: '为您推荐更多虹口区酒店：\n1. 如家精选·四川北路店 ¥138起\n2. 锦江之星·虹口足球场店 ¥156起\n3. 民宿·甜爱路附近 ¥160起',
+        food: '平价美食推荐：\n1. 小杨生煎（生煎包+牛肉汤）\n2. 老盛昌汤包（蟹粉小笼）\n3. 阿大葱油饼（网红早餐）\n4. 云南南路美食街',
+        photo: '最佳拍照时间：\n武康路：上午10点前（光线柔和）\n外滩：日落前30分钟（蓝调时刻）\n1933：下午2-4点（光影最佳）\nM50：全天均可（室内涂鸦）'
+      };
+      alert(messages[type]);
+    }
+    
+    // POI详情展示
+    function showPOIDetail(poi) {
+      const details = {
+        wukang: '武康路拍照指南：\n\n📍 最佳机位：\n- 武康大楼对面人行道（经典熨斗楼）\n- 武康路梧桐大道（法式街拍）\n- 安福路咖啡馆门口\n\n⏰ 最佳时间：上午10点前（光线柔和）\n\n👗 穿搭建议：浅色/法式风格衣服',
+        sinan: '思南公馆拍照指南：\n\n📍 最佳机位：\n- 花园洋房草坪前\n- 红砖墙+铁艺栏杆\n- 弄堂里行走抓拍\n\n⏰ 最佳时间：下午2-4点\n\n👗 穿搭建议：复古风格、旗袍、民国风',
+        bund: '外滩拍照指南：\n\n📍 最佳机位：\n- 外滩观景平台（万国建筑群）\n- 外白渡桥（铁桥+天际线）\n- 北外滩（人少景美）\n\n⏰ 最佳时间：\n- 17:30-18:30 金色时刻\n- 18:30-19:00 蓝调时刻\n- 19:00-20:30 夜景\n\n⚠️ 日落前30分钟到达占位',
+        lujiazui: '陆家嘴拍照指南：\n\n📍 最佳机位：\n- 环形天桥（三件套仰拍）\n- 滨江大道（回望外滩）\n- 震旦博物馆门口\n\n⏰ 最佳时间：上午9-10点（人少）',
+        dongfang: '东方明珠拍照指南：\n\n📍 最佳机位：\n- 259米透明走廊（脚下城市）\n- 263米主观光层（全景）\n- 90米户外观光廊\n\n⏰ 最佳时间：上午10:30（光线好、人少）\n\n💡 提示：透明走廊需要排队，建议先拍照再游览',
+        1933: '1933老场坊拍照指南：\n\n📍 最佳机位：\n- 交错廊桥（对称构图）\n- 旋转坡道（动态行走）\n- 伞形柱头（仰拍）\n\n⏰ 最佳时间：下午2-4点（光影最佳）\n\n👗 穿搭建议：黑白灰工业风',
+        tianai: '甜爱路拍照指南：\n\n📍 最佳机位：\n- 爱情诗墙（读诗侧拍）\n- 爱心邮筒（寄明信片）\n- 苏州河畔（逆光剪影）\n\n⏰ 最佳时间：日落前1小时\n\n💡 提示：可以寄一张明信片（邮资5元）',
+        yuyuan: '豫园拍照指南：\n\n📍 最佳机位：\n- 九曲桥（S形线条构图）\n- 湖心亭（倒影）\n- 城隍庙牌坊（仰拍）\n\n⏰ 最佳时间：上午9-10点（人少）\n\n💡 提示：豫园花园门票30元，外围免费且足够拍照',
+        yuyuanlu: '愚园路拍照指南：\n\n📍 最佳机位：\n- 弄堂口（烟火气）\n- 旧式公寓铁栏杆\n- 转角小店\n\n⏰ 最佳时间：中午11:30-13:00\n\n👗 穿搭建议：休闲日常风',
+        m50: 'M50创意园拍照指南：\n\n📍 最佳机位：\n- 涂鸦墙（色彩饱和度极高）\n- 老工厂铁门\n- 艺术装置前\n\n⏰ 最佳时间：下午2-4点\n\n👗 穿搭建议：潮流街头风',
+        return: '返程信息：\n\n🚂 Z245 上海南→长沙\n发车：19:30 上海南站\n到达：07:00 长沙站\n\n建议提前1小时到站，带好身份证。'
+      };
+      alert(details[poi]);
+    }
+  </script>
+  
+</body>
+</html>
